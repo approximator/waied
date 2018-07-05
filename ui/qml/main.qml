@@ -2,6 +2,8 @@ import QtQuick 2.10
 import QtQuick.Controls 2.4
 import QtQuick.Controls.Material 2.4
 
+import waied 1.0
+
 ApplicationWindow {
     visible: true
 
@@ -10,6 +12,10 @@ ApplicationWindow {
     width: 1024
     height: 768
     title: qsTr("Hello World")
+
+    TaskManager {
+
+    }
 
     Summary {
         id: summary
