@@ -14,7 +14,7 @@ ApplicationWindow {
     title: qsTr("Hello World")
 
     TaskManager {
-
+        id: taskManager
     }
 
     Summary {
@@ -24,6 +24,7 @@ ApplicationWindow {
     }
 
     TaskList {
+        model: taskManager.model
         width: parent.width
         anchors.top: summary.bottom
         anchors.bottom: parent.bottom

@@ -11,13 +11,13 @@ Pane {
         anchors.fill: parent
         Label {
             text: title
-            font.pixelSize: 30
-            font.bold: true
+            font.pixelSize: 20
+            font.bold: false
         }
 
         Label {
-            text: timeLogged
-            font.pixelSize: 15
+            text: timeSpent
+            font.pixelSize: 12
             font.bold: false
         }
     }

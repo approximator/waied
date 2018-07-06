@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QSettings>
+#include <QtQml>
 
 #include "taskmanager.h"
 
@@ -16,6 +17,7 @@ int main(int argc, char *argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
     qmlRegisterType<TaskManager>("waied", 1, 0, "TaskManager");
+    qRegisterMetaType<TTasksModel *>("TTasksModel*");
 
     QQmlApplicationEngine engine;
     QQuickStyle::setStyle("Material");
