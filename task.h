@@ -21,4 +21,4 @@ signals:
 public slots:
 };
 
-#endif // TASK_H
+#endif  // TASK_H

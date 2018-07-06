@@ -19,4 +19,4 @@ signals:
 public slots:
 };
 
-#endif // TASKMANAGER_H
+#endif  // TASKMANAGER_H

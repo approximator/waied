@@ -12,12 +12,12 @@
 
 #include "jira.h"
 
-
-struct ReplyParseResult {
+struct ReplyParseResult
+{
     bool ok;
     QJsonDocument doc;
 };
-QNetworkRequest makeRequest(const QString& url);
+QNetworkRequest makeRequest(const QString &url);
 ReplyParseResult parseReply(QNetworkReply *reply);
 
 // https://docs.atlassian.com/software/jira/docs/api/REST/7.10.2/
@@ -25,12 +25,11 @@ Jira::Jira(const QString &jiraApiUrl, QObject *parent)
     : QObject(parent)
     , mJiraApiUrl(jiraApiUrl)
 {
-
 }
 
 void Jira::searchTasks(const QString &query)
 {
-    qDebug() << __FUNCTION__ ;
+    qDebug() << __FUNCTION__;
 
     QSettings settings;
     qDebug() << "Reading " << settings.fileName();
@@ -40,10 +39,9 @@ void Jira::searchTasks(const QString &query)
     const auto fields = "id,key,summary,aggregatetimespent";
     const auto url = fmt::format("{jiraUrl}/search?jql={jqlRequest}&fields={fields}&maxResults=20",
                                  fmt::arg("jiraUrl", jiraApiUrl.toStdString()),
-                                 fmt::arg("jqlRequest", query.toStdString()),
-                                 fmt::arg("fields", fields));
+                                 fmt::arg("jqlRequest", query.toStdString()), fmt::arg("fields", fields));
     auto request = makeRequest(QString(url.c_str()));
-    QNetworkReply* reply = netManager->get(request);
+    QNetworkReply *reply = netManager->get(request);
     connect(reply, &QNetworkReply::finished, this, &Jira::onTasksSearchFinished);
 }
 
@@ -52,7 +50,8 @@ const std::list<JiraTask> &Jira::tasks() const
     return mTasks;
 }
 
-void Jira::onWorklogs(JiraTask& task, QNetworkReply* reply) {
+void Jira::onWorklogs(JiraTask &task, QNetworkReply *reply)
+{
     //    qDebug() << "Got worklogs for " << task.id;
 
     auto parsedReply = parseReply(reply);
@@ -68,17 +67,13 @@ void Jira::onWorklogs(JiraTask& task, QNetworkReply* reply) {
 
     for (auto value : worklogs.toArray()) {
         auto worklog = value.toObject();
-        task.worklog.emplace_back(
-                    worklog.value("author").toObject().value("key").toString(),
-                    worklog.value("comment").toString(),
-                    QDateTime::fromString(worklog.value("created").toString(), Qt::ISODate),
-                    QDateTime::fromString(worklog.value("started").toString(), Qt::ISODate),
-                    QDateTime::fromString(worklog.value("updated").toString(), Qt::ISODate),
-                    worklog.value("id").toString(),
-                    worklog.value("issueId").toString(),
-                    worklog.value("self").toString(),
-                    worklog.value("timeSpentSeconds").toInt()
-                    );
+        task.worklog.emplace_back(worklog.value("author").toObject().value("key").toString(),
+                                  worklog.value("comment").toString(),
+                                  QDateTime::fromString(worklog.value("created").toString(), Qt::ISODate),
+                                  QDateTime::fromString(worklog.value("started").toString(), Qt::ISODate),
+                                  QDateTime::fromString(worklog.value("updated").toString(), Qt::ISODate),
+                                  worklog.value("id").toString(), worklog.value("issueId").toString(),
+                                  worklog.value("self").toString(), worklog.value("timeSpentSeconds").toInt());
     }
 
     reply->close();
@@ -113,22 +108,17 @@ void Jira::onTasksSearchFinished()
 
     for (auto value : issues.toArray()) {
         auto issue = value.toObject();
-        mTasks.emplace_back(
-                    issue.value("fields").toObject().value("summary").toString(),
-                    issue.value("key").toString(),
-                    issue.value("id").toString(),
-                    issue.value("self").toString(),
-                    issue.value("fields").toObject().value("aggregatetimespent").toInt()
-                    );
-        auto& task = mTasks.back();
+        mTasks.emplace_back(issue.value("fields").toObject().value("summary").toString(), issue.value("key").toString(),
+                            issue.value("id").toString(), issue.value("self").toString(),
+                            issue.value("fields").toObject().value("aggregatetimespent").toInt());
+        auto &task = mTasks.back();
 
         // https://docs.atlassian.com/software/jira/docs/api/REST/7.10.2/#api/2/issue-getIssueWorklog
         auto req = makeRequest(task.url + "/worklog");
-        QNetworkReply* rep = netManager->get(req);
+        QNetworkReply *rep = netManager->get(req);
         expectedRelies.push_back(rep);
-        connect(rep, &QNetworkReply::finished, this, [&task,this](){
-            onWorklogs(task, dynamic_cast<QNetworkReply *>(QObject::sender()));
-        });
+        connect(rep, &QNetworkReply::finished, this,
+                [&task, this]() { onWorklogs(task, dynamic_cast<QNetworkReply *>(QObject::sender())); });
     }
 
     reply->close();
@@ -136,7 +126,7 @@ void Jira::onTasksSearchFinished()
     reply->deleteLater();
 }
 
-QNetworkRequest makeRequest(const QString& url)
+QNetworkRequest makeRequest(const QString &url)
 {
     QSettings settings;
     const auto userName = settings.value("jira/username", "username").toString();
@@ -148,7 +138,8 @@ QNetworkRequest makeRequest(const QString& url)
     return request;
 }
 
-ReplyParseResult parseReply(QNetworkReply *reply) {
+ReplyParseResult parseReply(QNetworkReply *reply)
+{
     ReplyParseResult res;
     res.ok = false;
 
