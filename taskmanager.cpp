@@ -15,7 +15,8 @@ TaskManager::TaskManager(QObject *parent)
         for (const auto& task : mJira.tasks()) {
             qDebug() << "\nTitle: " << task.title
                      << "\nKey  : " << task.key
-                     << "\nId   : " << task.id;
+                     << "\nId   : " << task.id
+                     << "\nUrl  : " << task.url;
         }
     });
 }
