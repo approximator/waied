@@ -7,6 +7,7 @@ Task::Task(QString p_title, QString p_key, QString p_id, QString p_url, std::chr
     , m_id(std::move(p_id))
     , m_url(std::move(p_url))
     , m_timeSpent(std::move(p_timeSpent))
+    , m_workLog(this)
     , QObject(parent)
 {
     connect(this, &Task::timeSpentChanged, this, [this]() { emit timeSpentStrChanged(); });
@@ -14,46 +15,26 @@ Task::Task(QString p_title, QString p_key, QString p_id, QString p_url, std::chr
 
 void Task::appendWorkLogItem(WorkLog *wl)
 {
-    m_workLog.append(wl);
+    m_workLog.append(&m_workLog, wl);
 }
 
-int Task::workLogCount() const
+int Task::workLogCount()
 {
-    m_workLog.count();
+    m_workLog.count(&m_workLog);
 }
 
-WorkLog *Task::workLogItem(int i) const
+WorkLog *Task::workLogItem(int i)
 {
-    return m_workLog.at(i);
+    return m_workLog.at(&m_workLog, i);
 }
 
 void Task::clearWorkLog()
 {
-    m_workLog.clear();
+    m_workLog.clear(&m_workLog);
 }
 
-void Task::appendWorkLogItem(QQmlListProperty<WorkLog> *list, WorkLog *wl)
+QString Task::timeSpentStr() const
 {
-    reinterpret_cast<Task *>(list->data)->appendWorkLogItem(wl);
+    return QString(date::format("%X", m_timeSpent).c_str());
 }
 
-int Task::workLogCount(QQmlListProperty<WorkLog> *list)
-{
-    return reinterpret_cast<Task *>(list->data)->workLogCount();
-}
-
-WorkLog *Task::workLogItem(QQmlListProperty<WorkLog> *list, int i)
-{
-    return reinterpret_cast<Task *>(list->data)->workLogItem(i);
-}
-
-void Task::clearWorkLog(QQmlListProperty<WorkLog> *list)
-{
-    reinterpret_cast<Task *>(list->data)->clearWorkLog();
-}
-
-QQmlListProperty<WorkLog> Task::workLog()
-{
-    return QQmlListProperty<WorkLog>(this, this, &Task::appendWorkLogItem, &Task::workLogCount, &Task::workLogItem,
-                                     &Task::clearWorkLog);
-}

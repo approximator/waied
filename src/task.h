@@ -8,6 +8,7 @@
 #include <QQmlListProperty>
 
 #include "date/date.h"
+#include "QQmlListPropertyHelper.h"
 #include "QQmlAutoPropertyHelpers.h"
 
 #include "worklog.h"
@@ -20,7 +21,7 @@ class Task : public QObject
     QML_WRITABLE_AUTO_PROPERTY(QString, id)
     QML_WRITABLE_AUTO_PROPERTY(QString, url)
     QML_WRITABLE_AUTO_PROPERTY(std::chrono::seconds, timeSpent)
-    Q_PROPERTY(QQmlListProperty<WorkLog> workLog READ workLog)
+    QML_LIST_PROPERTY(WorkLog, workLog)
 
     Q_PROPERTY(QString timeSpentStr READ timeSpentStr NOTIFY timeSpentStrChanged)
 
@@ -28,24 +29,14 @@ public:
     explicit Task(QString p_title, QString p_key, QString p_id, QString p_url, std::chrono::seconds p_timeSpent,
                   QObject *parent = nullptr);
 
-    QQmlListProperty<WorkLog> workLog();
     void appendWorkLogItem(WorkLog *wl);
-    int workLogCount() const;
-    WorkLog *workLogItem(int i) const;
+    int workLogCount();
+    WorkLog *workLogItem(int i);
     void clearWorkLog();
 
-    QString timeSpentStr() const
-    {
-        return QString(date::format("%X", m_timeSpent).c_str());
-    }
+    QString timeSpentStr() const;
 
 private:
-    QVector<WorkLog *> m_workLog;
-
-    static void appendWorkLogItem(QQmlListProperty<WorkLog> *list, WorkLog *wl);
-    static int workLogCount(QQmlListProperty<WorkLog> *list);
-    static WorkLog *workLogItem(QQmlListProperty<WorkLog> *list, int i);
-    static void clearWorkLog(QQmlListProperty<WorkLog> *list);
 
 signals:
     void timeSpentStrChanged(void);
