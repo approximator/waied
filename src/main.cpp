@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<TaskManager>("waied", 1, 0, "TaskManager");
     qRegisterMetaType<TTasksModel *>("TTasksModel*");
+    qRegisterMetaType<std::chrono::seconds>("std::chrono::seconds");
 
     QQmlApplicationEngine engine;
     QQuickStyle::setStyle("Material");

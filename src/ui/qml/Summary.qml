@@ -3,21 +3,25 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.2
 
 RowLayout {
+    property alias loggedToday: loggedToday.text
+    property alias loggedYesterday: loggedYesterday.text
+    property alias loggedThisWeek: loggedThisWeek.text
+
     id: layout
     spacing: 5
 
     InfoCard {
-        text: "0"
+        id: loggedYesterday
         subText: "Logged yesterday"
     }
 
     InfoCard {
-        text: "0"
+        id: loggedToday
         subText: "Logged today"
     }
 
     InfoCard {
-        text: "0"
+        id: loggedThisWeek
         subText: "Logged this week"
     }
 

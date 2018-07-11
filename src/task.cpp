@@ -1,6 +1,7 @@
 #include "task.h"
 
-Task::Task(QString p_title, QString p_key, QString p_id, QString p_url, int p_timeSpent, QObject *parent)
+Task::Task(QString p_title, QString p_key, QString p_id, QString p_url, std::chrono::seconds p_timeSpent,
+           QObject *parent)
     : m_title(std::move(p_title))
     , m_key(std::move(p_key))
     , m_id(std::move(p_id))
@@ -8,6 +9,7 @@ Task::Task(QString p_title, QString p_key, QString p_id, QString p_url, int p_ti
     , m_timeSpent(std::move(p_timeSpent))
     , QObject(parent)
 {
+    connect(this, &Task::timeSpentChanged, this, [this]() { emit timeSpentStrChanged(); });
 }
 
 void Task::appendWorkLogItem(WorkLog *wl)

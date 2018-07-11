@@ -7,3 +7,6 @@
 [submodule "submodules/qt-qml-models"]
 	path = submodules/qt-qml-models
 	url = https://github.com/approximator/Qt-QML-Models.git
+[submodule "submodules/date"]
+	path = submodules/date
+	url = https://github.com/HowardHinnant/date.git

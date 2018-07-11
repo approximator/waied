@@ -16,7 +16,7 @@ Pane {
         }
 
         Label {
-            text: timeSpent
+            text: timeSpentStr
             font.pixelSize: 12
             font.bold: false
         }

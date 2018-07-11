@@ -8,7 +8,8 @@
 #include <QAuthenticator>
 #include <QSettings>
 
-#include <fmt/format.h>
+#include "fmt/format.h"
+#include "date/tz.h"
 
 #include "jira.h"
 
@@ -59,33 +60,46 @@ void Jira::onWorklogs(JiraTask &task, QNetworkReply *reply)
         return;
     }
 
+    // std::ofstream f(std::string("/tmp/worklog_") + task.id.toStdString() + " .json");
+    // f << QString::fromUtf8(parsedReply.doc.toJson(QJsonDocument::JsonFormat::Indented)).toStdString();
+    // f.close();
+
     auto worklogs = parsedReply.doc.object().value("worklogs");
     if (worklogs.isUndefined()) {
         qDebug() << "Cannot parse worklogs from response";
         return;
     }
 
+    auto parseDate = [](const QString &str) {
+        std::chrono::system_clock::time_point utc_tp;
+        std::istringstream in{ str.toStdString() };
+        in >> date::parse("%FT%H:%M:%S%z", utc_tp);
+        if (!in.good()) {
+            qDebug() << "Cannot parse date: " << str;
+        }
+        return utc_tp;
+    };
+
     for (auto value : worklogs.toArray()) {
         auto worklog = value.toObject();
         task.worklog.emplace_back(worklog.value("author").toObject().value("key").toString(),
-                                  worklog.value("comment").toString(),
-                                  QDateTime::fromString(worklog.value("created").toString(), Qt::ISODate),
-                                  QDateTime::fromString(worklog.value("started").toString(), Qt::ISODate),
-                                  QDateTime::fromString(worklog.value("updated").toString(), Qt::ISODate),
-                                  worklog.value("id").toString(), worklog.value("issueId").toString(),
-                                  worklog.value("self").toString(), worklog.value("timeSpentSeconds").toInt());
+                                  worklog.value("comment").toString(), parseDate(worklog.value("created").toString()),
+                                  parseDate(worklog.value("started").toString()),
+                                  parseDate(worklog.value("updated").toString()), worklog.value("id").toString(),
+                                  worklog.value("issueId").toString(), worklog.value("self").toString(),
+                                  std::chrono::seconds{ worklog.value("timeSpentSeconds").toInt() });
     }
 
     reply->close();
     reply->disconnect();
 
     auto isFinished = [](auto r) { return r->isFinished(); };
-    if (std::all_of(begin(expectedRelies), end(expectedRelies), isFinished)) {
-        for (auto reply : expectedRelies) {
+    if (std::all_of(begin(expectedReplies), end(expectedReplies), isFinished)) {
+        for (auto reply : expectedReplies) {
             reply->deleteLater();
         }
-        expectedRelies.clear();
-        qDebug() << "All request were finished";
+        expectedReplies.clear();
+        qDebug() << "All requests were finished";
         emit taskSearchComplete();
     }
 }
@@ -100,6 +114,10 @@ void Jira::onTasksSearchFinished()
         return;
     }
 
+    // std::ofstream f("/tmp/task_list.json");
+    // f << QString::fromUtf8(parsedReply.doc.toJson(QJsonDocument::JsonFormat::Indented)).toStdString();
+    // f.close();
+
     auto issues = parsedReply.doc.object().value("issues");
     if (issues.isUndefined()) {
         qDebug() << "Cannot parse issues from response";
@@ -108,15 +126,16 @@ void Jira::onTasksSearchFinished()
 
     for (auto value : issues.toArray()) {
         auto issue = value.toObject();
-        mTasks.emplace_back(issue.value("fields").toObject().value("summary").toString(), issue.value("key").toString(),
-                            issue.value("id").toString(), issue.value("self").toString(),
-                            issue.value("fields").toObject().value("aggregatetimespent").toInt());
+        mTasks.emplace_back(
+            issue.value("fields").toObject().value("summary").toString(), issue.value("key").toString(),
+            issue.value("id").toString(), issue.value("self").toString(),
+            std::chrono::seconds{ issue.value("fields").toObject().value("aggregatetimespent").toInt() });
         auto &task = mTasks.back();
 
         // https://docs.atlassian.com/software/jira/docs/api/REST/7.10.2/#api/2/issue-getIssueWorklog
         auto req = makeRequest(task.url + "/worklog");
         QNetworkReply *rep = netManager->get(req);
-        expectedRelies.push_back(rep);
+        expectedReplies.push_back(rep);
         connect(rep, &QNetworkReply::finished, this,
                 [&task, this]() { onWorklogs(task, dynamic_cast<QNetworkReply *>(QObject::sender())); });
     }

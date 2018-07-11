@@ -19,6 +19,10 @@ ApplicationWindow {
 
     Summary {
         id: summary
+        loggedToday: taskManager.reportedTodayStr
+        loggedYesterday: taskManager.reportedYesterdayStr
+        loggedThisWeek: taskManager.reportedThisWeekStr
+
         anchors.top: parent.top
         width: parent.width
     }
