@@ -1,0 +1,48 @@
+{
+    "expand": "schema,names",
+    "issues": [
+        {
+            "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+            "fields": {
+                "aggregatetimespent": 19800,
+                "summary": "Do some work please"
+            },
+            "id": "1003",
+            "key": "taskkey1",
+            "self": "http://127.0.0.1:8012/jira/rest/api/2/issue/1003"
+        },
+        {
+            "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+            "fields": {
+                "aggregatetimespent": 77400,
+                "summary": "Make a module for system keychain interaction"
+            },
+            "id": "1000",
+            "key": "taskkey2",
+            "self": "http://127.0.0.1:8012/jira/rest/api/2/issue/1000"
+        },
+        {
+            "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+            "fields": {
+                "aggregatetimespent": 18000,
+                "summary": "Another feature"
+            },
+            "id": "1001",
+            "key": "taskkey3",
+            "self": "http://127.0.0.1:8012/jira/rest/api/2/issue/1001"
+        },
+        {
+            "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+            "fields": {
+                "aggregatetimespent": 21600,
+                "summary": "One more"
+            },
+            "id": "1002",
+            "key": "taskkey4",
+            "self": "http://127.0.0.1:8012/jira/rest/api/2/issue/1002"
+        }
+    ],
+    "maxResults": 4,
+    "startAt": 0,
+    "total": 42
+}
