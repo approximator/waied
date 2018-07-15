@@ -1,6 +1,5 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QQuickStyle>
 #include <QSettings>
 #include <QtQml>
 
@@ -21,7 +20,6 @@ int main(int argc, char *argv[])
     qRegisterMetaType<std::chrono::seconds>("std::chrono::seconds");
 
     QQmlApplicationEngine engine;
-    QQuickStyle::setStyle("Material");
     engine.load(QUrl(QStringLiteral("qrc:/ui/qml/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
