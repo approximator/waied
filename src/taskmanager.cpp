@@ -5,9 +5,9 @@
 
 TaskManager::TaskManager(QObject *parent)
     : m_model(new TTasksModel(this))
-    , m_reportedToday(0)
-    , m_reportedYesterday(0)
-    , m_reportedThisWeek(0)
+    , m_reportedToday(std::chrono::seconds{ 0 })
+    , m_reportedYesterday(std::chrono::seconds{ 0 })
+    , m_reportedThisWeek(std::chrono::seconds{ 0 })
     , QObject(parent)
 {
     qDebug() << __FUNCTION__;
@@ -16,8 +16,35 @@ TaskManager::TaskManager(QObject *parent)
     connect(this, &TaskManager::reportedThisWeekChanged, this, [this]() { emit reportedThisWeekStrChanged(); });
     connect(&mJira, &Jira::taskSearchComplete, this, &TaskManager::processReceivedTasks);
 
+    QSettings settings;
+    updateSettings(settings.value("jira/apiUrl", "").toString(), settings.value("jira/username", "").toString(),
+                   settings.value("jira/pass", "").toString());
+    updateTasks();
+}
+
+void TaskManager::updateTasks()
+{
+    if (mJira.apiUrl().isEmpty()) {
+        qDebug() << "Not updating tasks as there is no Jira API url.";
+        return;
+    }
+    m_model->clear();
+    set_reportedToday(std::chrono::seconds{ 0 });
+    set_reportedYesterday(std::chrono::seconds{ 0 });
+    set_reportedThisWeek(std::chrono::seconds{ 0 });
+
     // mJira.searchTasks("worklogAuthor=currentuser() AND worklogDate >= startOfDay()+order+by+updatedDate");
     mJira.searchTasks("( assignee=currentuser() OR worklogAuthor=currentuser() )+order+by+updatedDate");
+}
+
+void TaskManager::updateSettings(const QString &jiraUrl, const QString &username, const QString &pass)
+{
+    qDebug() << "Updating settings... Username: " << username;
+    mCurrentUser = username;
+    mJira.set_apiUrl(jiraUrl);
+    mJira.set_username(username);
+    mJira.set_password(pass);
+    qDebug() << "Jira API: " << jiraUrl;
 }
 
 void TaskManager::processReceivedTasks()

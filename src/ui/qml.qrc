@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>qml/Summary.qml</file>
+        <file>qml/InfoCard.qml</file>
+        <file>qml/TaskListItem.qml</file>
+        <file>qml/TasksView.qml</file>
+        <file>qml/UserInfoView.qml</file>
+    </qresource>
+</RCC>

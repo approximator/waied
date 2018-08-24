@@ -5,8 +5,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-#include <QAuthenticator>
-#include <QSettings>
 
 #include "fmt/format.h"
 #include "date/tz.h"
@@ -22,21 +20,21 @@ QNetworkRequest makeRequest(const QString &url);
 ReplyParseResult parseReply(QNetworkReply *reply);
 
 // https://docs.atlassian.com/software/jira/docs/api/REST/7.10.2/
-Jira::Jira(const QString &jiraApiUrl, QObject *parent)
+Jira::Jira(QObject *parent)
     : QObject(parent)
-    , mJiraApiUrl(jiraApiUrl)
+    , m_apiUrl("")
+    , m_username("")
+    , m_password("")
 {
 }
 
 void Jira::searchTasks(const QString &query)
 {
     qDebug() << __FUNCTION__;
-
-    QSettings settings;
-    qDebug() << "Reading " << settings.fileName();
+    mTasks.clear();
 
     // https://docs.atlassian.com/software/jira/docs/api/REST/7.10.2/#api/2/search
-    const auto jiraApiUrl = settings.value("jira/apiUrl", "https://someserver.com/jira/rest/api/2").toString();
+    const auto jiraApiUrl = m_apiUrl;
     const auto fields = "id,key,summary,aggregatetimespent";
     const auto url = fmt::format("{jiraUrl}/search?jql={jqlRequest}&fields={fields}&maxResults=20",
                                  fmt::arg("jiraUrl", jiraApiUrl.toStdString()),
@@ -145,11 +143,10 @@ void Jira::onTasksSearchFinished()
     reply->deleteLater();
 }
 
-QNetworkRequest makeRequest(const QString &url)
+QNetworkRequest Jira::makeRequest(const QString &url)
 {
-    QSettings settings;
-    const auto userName = settings.value("jira/username", "username").toString();
-    const auto pass = settings.value("jira/pass", "pass").toString();
+    const auto userName = m_username;
+    const auto pass = m_password;
     QNetworkRequest request;
     request.setUrl(QUrl(url));
     const auto auth = QString("%1:%2").arg(userName).arg(pass);
@@ -168,10 +165,11 @@ ReplyParseResult parseReply(QNetworkReply *reply)
     }
 
     QJsonParseError parseError;
-    res.doc = QJsonDocument::fromJson(reply->readAll(), &parseError);
+    const auto replyContent = reply->readAll();
+    res.doc = QJsonDocument::fromJson(replyContent, &parseError);
 
     if (parseError.error != QJsonParseError::NoError) {
-        qDebug() << "Parse error: " << parseError.errorString();
+        qDebug() << "Parse error: " << parseError.errorString() << "\n" << replyContent;
         return res;
     }
 

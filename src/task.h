@@ -36,8 +36,6 @@ public:
 
     QString timeSpentStr() const;
 
-private:
-
 signals:
     void timeSpentStrChanged(void);
 

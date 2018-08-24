@@ -29,6 +29,8 @@ class TaskManager : public QObject
 
 public:
     explicit TaskManager(QObject *parent = nullptr);
+    Q_INVOKABLE void updateTasks();
+    Q_INVOKABLE void updateSettings(const QString &jiraUrl, const QString &username, const QString &pass);
 
     QString reportedTodayStr() const
     {
@@ -45,7 +47,7 @@ public:
 
 private:
     Jira mJira;
-    QString mCurrentUser{ QSettings().value("jira/username", "username").toString() };
+    QString mCurrentUser{};
 
     void updateReportSummary(const WorkLog *worklogItem);
 

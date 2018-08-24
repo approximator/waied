@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QFontDatabase>
 #include <QSettings>
 #include <QtQml>
 
@@ -15,12 +16,17 @@ int main(int argc, char *argv[])
     app.setApplicationName("waied");
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
+    QFontDatabase fontDatabase;
+    if (fontDatabase.addApplicationFont(":/fonts/fontello.ttf") == -1) {
+        qWarning() << "Failed to load fontello.ttf";
+    }
+
     qmlRegisterType<TaskManager>("waied", 1, 0, "TaskManager");
     qRegisterMetaType<TTasksModel *>("TTasksModel*");
     qRegisterMetaType<std::chrono::seconds>("std::chrono::seconds");
 
     QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/ui/qml/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
 

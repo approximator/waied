@@ -7,6 +7,8 @@
 #include <QObject>
 #include <QNetworkAccessManager>
 
+#include "QQmlAutoPropertyHelpers.h"
+
 struct JiraWorkLog
 {
     QString author;
@@ -57,13 +59,19 @@ struct JiraTask
 class Jira : public QObject
 {
     Q_OBJECT
+    QML_WRITABLE_AUTO_PROPERTY(QString, apiUrl)
+    QML_WRITABLE_AUTO_PROPERTY(QString, username)
+    QML_WRITABLE_AUTO_PROPERTY(QString, password)
+
 public:
-    explicit Jira(const QString &jiraApiUrl = "", QObject *parent = nullptr);
+    explicit Jira(QObject *parent = nullptr);
     void searchTasks(const QString &query);
 
     const std::list<JiraTask> &tasks() const;
 
 private:
+    QNetworkRequest makeRequest(const QString &url);
+
     QNetworkAccessManager *netManager{ new QNetworkAccessManager(this) };
     QString mJiraApiUrl;
     std::list<JiraTask> mTasks;

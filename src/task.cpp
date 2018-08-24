@@ -37,4 +37,3 @@ QString Task::timeSpentStr() const
 {
     return QString(date::format("%X", m_timeSpent).c_str());
 }
-

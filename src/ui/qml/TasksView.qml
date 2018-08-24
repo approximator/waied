@@ -3,8 +3,40 @@ import QtQuick.Controls 2.2
 import waied 1.0
 
 Page {
+    property TaskManager taskManager: taskManager
+
     TaskManager {
         id: taskManager
+    }
+
+    header: ToolBar {
+        leftPadding: 8
+
+        Flow {
+            width: parent.width
+
+            Row {
+                ToolButton {
+                    id: btnUpdate
+                    text: "\uE800" // icon-update
+                    font.family: "fontello"
+                    onClicked: taskManager.updateTasks()
+                }
+                ToolButton {
+                    id: btnSettings
+                    text: "\uE801" // icon-settings
+                    font.family: "fontello"
+                    onClicked: showSettings()
+                }
+                ToolSeparator { }
+                ToolButton {
+                    id: btnExit
+                    text: "\uE802" // icon-exit
+                    font.family: "fontello"
+                    onClicked: Qt.exit(0)
+                }
+            }
+        }
     }
 
     Summary {

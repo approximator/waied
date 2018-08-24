@@ -8,7 +8,7 @@ add_subdirectory(../submodules submodules)
 
 file(GLOB SRCS "*.cpp")
 file(GLOB HDRS "*.h")
-add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} "qml.qrc" "settings.qrc")
+add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} "ui/qml.qrc" "ui/fonts.qrc" "settings.qrc")
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 find_package(Qt5 COMPONENTS Core Quick QuickControls2 REQUIRED)
