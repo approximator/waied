@@ -1,0 +1,123 @@
+{
+    "maxResults": 4,
+    "startAt": 0,
+    "worklogs": [
+        {
+            "author": {
+                "timeZone": "Etc/UTC",
+                "active": true,
+                "displayName": "Other, Developer",
+                "self": "http://127.0.0.1:8012/jira/rest/api/2/user?username=otherdeveloper",
+                "name": "otherdeveloper",
+                "key": "otherdeveloper",
+                "emailAddress": "Other.Developer@examlpe.com"
+            },
+            "issueId": "1003",
+            "timeSpentSeconds": 2700,
+            "updateAuthor": {
+                "timeZone": "Etc/UTC",
+                "active": true,
+                "displayName": "Other, Developer",
+                "self": "http://127.0.0.1:8012/jira/rest/api/2/user?username=otherdeveloper",
+                "name": "otherdeveloper",
+                "key": "otherdeveloper",
+                "emailAddress": "Other.Developer@examlpe.com"
+            },
+            "self": "http://127.0.0.1:8012/jira/rest/api/2/issue/1003/worklog/8000040",
+            "started": "2018-07-23T22:38:56.000+0000",
+            "updated": "2018-07-23T22:38:56.000+0000",
+            "id": "8000040",
+            "comment": "another thing",
+            "timeSpent": "45m",
+            "created": "2018-06-01T09:12:12.809+0000"
+        },
+        {
+            "author": {
+                "timeZone": "Europe/Warsaw",
+                "active": true,
+                "displayName": "John, Doe",
+                "self": "http://127.0.0.1:8012/jira/rest/api/2/user?username=johndoe",
+                "name": "johndoe",
+                "key": "johndoe",
+                "emailAddress": "Doe.John@example.com"
+            },
+            "issueId": "1003",
+            "timeSpentSeconds": 7200,
+            "updateAuthor": {
+                "timeZone": "Europe/Warsaw",
+                "active": true,
+                "displayName": "John, Doe",
+                "self": "http://127.0.0.1:8012/jira/rest/api/2/user?username=johndoe",
+                "name": "johndoe",
+                "key": "johndoe",
+                "emailAddress": "Doe.John@example.com"
+            },
+            "self": "http://127.0.0.1:8012/jira/rest/api/2/issue/1003/worklog/8000041",
+            "started": "2018-07-24T22:38:56.000+0000",
+            "updated": "2018-07-24T22:38:56.000+0000",
+            "id": "8000041",
+            "comment": "",
+            "timeSpent": "2h",
+            "created": "2018-06-07T07:52:16.192+0000"
+        },
+        {
+            "author": {
+                "timeZone": "Etc/UTC",
+                "active": true,
+                "displayName": "Other, Developer",
+                "self": "http://127.0.0.1:8012/jira/rest/api/2/user?username=otherdeveloper",
+                "name": "otherdeveloper",
+                "key": "otherdeveloper",
+                "emailAddress": "Other.Developer@examlpe.com"
+            },
+            "issueId": "1003",
+            "timeSpentSeconds": 4500,
+            "updateAuthor": {
+                "timeZone": "Etc/UTC",
+                "active": true,
+                "displayName": "Other, Developer",
+                "self": "http://127.0.0.1:8012/jira/rest/api/2/user?username=otherdeveloper",
+                "name": "otherdeveloper",
+                "key": "otherdeveloper",
+                "emailAddress": "Other.Developer@examlpe.com"
+            },
+            "self": "http://127.0.0.1:8012/jira/rest/api/2/issue/1003/worklog/8000042",
+            "started": "2018-07-19T22:38:56.000+0000",
+            "updated": "2018-07-19T22:38:56.000+0000",
+            "id": "8000042",
+            "comment": "aa",
+            "timeSpent": "1h 15m",
+            "created": "2018-06-21T08:04:04.409+0000"
+        },
+        {
+            "author": {
+                "timeZone": "Europe/Warsaw",
+                "active": true,
+                "displayName": "John, Doe",
+                "self": "http://127.0.0.1:8012/jira/rest/api/2/user?username=johndoe",
+                "name": "johndoe",
+                "key": "johndoe",
+                "emailAddress": "Doe.John@example.com"
+            },
+            "issueId": "1003",
+            "timeSpentSeconds": 5400,
+            "updateAuthor": {
+                "timeZone": "Europe/Warsaw",
+                "active": true,
+                "displayName": "John, Doe",
+                "self": "http://127.0.0.1:8012/jira/rest/api/2/user?username=johndoe",
+                "name": "johndoe",
+                "key": "johndoe",
+                "emailAddress": "Doe.John@example.com"
+            },
+            "self": "http://127.0.0.1:8012/jira/rest/api/2/issue/1003/worklog/8000043",
+            "started": "2018-07-23T22:38:56.000+0000",
+            "updated": "2018-07-23T22:38:56.000+0000",
+            "id": "8000043",
+            "comment": "",
+            "timeSpent": "1h 30m",
+            "created": "2018-07-04T12:53:06.701+0000"
+        }
+    ],
+    "total": 4
+}
