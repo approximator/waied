@@ -67,16 +67,22 @@ void TaskManager::processReceivedTasks()
 
 void TaskManager::updateReportSummary(const WorkLog *worklogItem)
 {
-    if (worklogItem->author() == mCurrentUser) {
-        // day starts from 06:00
-        const auto startOfToday = date::floor<date::days>(std::chrono::system_clock::now()) + std::chrono::hours{ 6 };
-        const auto startOfYesterday = startOfToday - date::days{ 1 };
+    const auto today = date::floor<date::days>(std::chrono::system_clock::now());
+    // day starts from 06:00
+    const auto startOfToday = today + std::chrono::hours{ 6 };
+    const auto startOfYesterday = startOfToday - date::days{ 1 };
+    const auto startOfThisWeek = date::sys_days{today} - (date::weekday{today} - date::weekday{1});
 
+    if (worklogItem->author() == mCurrentUser) {
         if (worklogItem->started() >= startOfToday) {  // today
             set_reportedToday(m_reportedToday + worklogItem->timeSpentSec());
+            set_reportedThisWeek(m_reportedThisWeek + worklogItem->timeSpentSec());
         } else if (worklogItem->started() >= startOfYesterday && worklogItem->started() < startOfToday) {  // yesterday
             set_reportedYesterday(m_reportedYesterday + worklogItem->timeSpentSec());
+            set_reportedThisWeek(m_reportedThisWeek + worklogItem->timeSpentSec());
         }
-        // TODO: this week
+        else if (worklogItem->started() >= startOfThisWeek) { //start of week
+            set_reportedThisWeek(m_reportedThisWeek + worklogItem->timeSpentSec());
+        }
     }
 }
