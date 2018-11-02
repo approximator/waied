@@ -1,6 +1,6 @@
 
-add_subdirectory(catch)
-add_subdirectory(rapidcheck)
+add_subdirectory(catch EXCLUDE_FROM_ALL)
+add_subdirectory(rapidcheck EXCLUDE_FROM_ALL)
 
 enable_testing()
 add_executable(${PROJECT_NAME}_test
