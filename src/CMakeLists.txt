@@ -6,6 +6,8 @@ set(CMAKE_AUTORCC ON)
 add_library(${PROJECT_NAME}_lib
     jira.cpp
     jira.h
+    cache.cpp
+    cache.h
     task.cpp
     task.h
     worklog.cpp

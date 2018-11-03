@@ -33,6 +33,7 @@ before_install:
     travis_retry wget -q https://cmake.org/files/v3.12/cmake-3.12.3-Linux-x86_64.sh
     sh cmake-3.12.3-Linux-x86_64.sh --skip-license
   - export PATH=$TRAVIS_BUILD_DIR/bin:$PATH
+  - export RC_PARAMS="max_success=800 max_size=200"
 
 script:
   - if [ "$TRAVIS_COMPILER" == "gcc" ]; then export CXX=g++-8; export CC=gcc-8; fi

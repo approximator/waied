@@ -6,6 +6,7 @@ platform: x64
 environment:
   GENERATOR: "Visual Studio 15 2017 Win64"
   QT5: C:\Qt\5.11.2\msvc2017_64
+  RC_PARAMS: "max_success=800 max_size=200"
 
   matrix:
     - CONFIGURATION: Debug

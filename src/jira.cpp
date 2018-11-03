@@ -55,7 +55,7 @@ void Jira::searchTasks(const QString &query)
 
     // https://docs.atlassian.com/software/jira/docs/api/REST/7.10.2/#api/2/search
     const auto jiraApiUrl = m_apiUrl;
-    const auto fields = "id,key,summary,aggregatetimespent,priority,status";
+    const auto fields = "id,key,summary,aggregatetimespent,priority,status,updated";
     const auto url = fmt::format("{jiraUrl}/search?jql={jqlRequest}&fields={fields}&maxResults=200",
                                  fmt::arg("jiraUrl", jiraApiUrl.toStdString()),
                                  fmt::arg("jqlRequest", query.toStdString()), fmt::arg("fields", fields));

@@ -10,9 +10,6 @@
 [submodule "submodules/date"]
 	path = submodules/date
 	url = https://github.com/HowardHinnant/date.git
-[submodule "tests/catch"]
-	path = tests/catch
-	url = https://github.com/catchorg/Catch2.git
 [submodule "tests/rapidcheck"]
 	path = tests/rapidcheck
 	url = https://github.com/emil-e/rapidcheck.git
