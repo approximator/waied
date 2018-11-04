@@ -4,11 +4,11 @@
 #include "helpers.h"
 #include "../src/cache.h"
 
-static auto getTask()
+static auto getTask(const QString &key)
 {
-    return std::make_shared<Task>("title", "key", "id", "url",
-                                  date::floor<std::chrono::seconds>(std::chrono::system_clock::now()),
-                                  std::chrono::seconds{ 1000 }, "Major", "Open");
+    return std::make_shared<Task>(
+        "title", key, "id", "url", date::floor<std::chrono::seconds>(std::chrono::system_clock::now()),
+        std::chrono::seconds{ 1000 }, "Major", "Open", std::chrono::system_clock::time_point{});
 }
 
 static WorkLog *getWorklogItem(Task &task)
@@ -21,19 +21,19 @@ static WorkLog *getWorklogItem(Task &task)
 
 SCENARIO("Read tasks have to be the same as previously written")
 {
-
+    qSetMessagePattern("%{time process}  [%{type}] %{file}:%{line}    %{message}");
     GIVEN("A list with some tasks")
     {
         const auto cacheDir = "./";
-        std::shared_ptr<Task> task = getTask();
+        std::shared_ptr<Task> task = getTask("task1");
 
         task->appendWorkLogItem(getWorklogItem(*task));
         task->appendWorkLogItem(getWorklogItem(*task));
         task->appendWorkLogItem(getWorklogItem(*task));
-        auto task2 = getTask();
+        auto task2 = getTask("task2");
         task2->appendWorkLogItem(getWorklogItem(*task2));
         task2->appendWorkLogItem(getWorklogItem(*task2));
-        const auto tasks = Cache::TaskList{ task, task2 };
+        const auto tasks = Cache::TaskList{ { task->key(), task }, { task2->key(), task2 } };
         REQUIRE(tasks.size() == 2);
 
         WHEN("The tasks are written to cache")

@@ -6,8 +6,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "fmt/format.h"
-//#include "date/tz.h"
+#include <fmt/format.h>
 
 #include "jira.h"
 
@@ -17,7 +16,6 @@ struct ReplyParseResult
     QJsonDocument doc;
 };
 
-QNetworkRequest makeRequest(const QString &url);
 ReplyParseResult parseReply(QNetworkReply *reply);
 
 static auto parseJiraDate(const QString &str)
@@ -69,49 +67,6 @@ const Jira::TaskList &Jira::tasks() const
     return mTasks;
 }
 
-void Jira::onWorklogs(Task &task, QNetworkReply *reply)
-{
-    //    qDebug() << "Got worklogs for " << task.id;
-
-    const auto parsedReply = parseReply(reply);
-    if (!parsedReply.ok) {
-        return;
-    }
-
-    //     std::ofstream f(std::string("/tmp/worklog_") + task.id.toStdString() + " .json");
-    //     f << QString::fromUtf8(parsedReply.doc.toJson(QJsonDocument::JsonFormat::Indented)).toStdString();
-    //     f.close();
-
-    const auto worklogs = parsedReply.doc.object().value("worklogs");
-    if (worklogs.isUndefined()) {
-        qDebug() << "Cannot parse worklogs from response";
-        return;
-    }
-
-    for (const auto &value : worklogs.toArray()) {
-        const auto worklog = value.toObject();
-        task.appendWorkLogItem(new WorkLog(
-            worklog.value("author").toObject().value("key").toString(), worklog.value("comment").toString(),
-            parseJiraDate(worklog.value("created").toString()), parseJiraDate(worklog.value("started").toString()),
-            parseJiraDate(worklog.value("updated").toString()), worklog.value("id").toString(),
-            worklog.value("issueId").toString(), worklog.value("self").toString(),
-            std::chrono::seconds{ worklog.value("timeSpentSeconds").toInt() }, &task));
-    }
-
-    reply->close();
-    reply->disconnect();
-
-    auto isFinished = [](auto r) { return r->isFinished(); };
-    if (std::all_of(begin(expectedReplies), end(expectedReplies), isFinished)) {
-        for (auto expectedReply : expectedReplies) {
-            expectedReply->deleteLater();
-        }
-        expectedReplies.clear();
-        qDebug() << "All requests were finished";
-        emit taskSearchComplete();
-    }
-}
-
 void Jira::onTasksSearchFinished()
 {
     qDebug() << "Tasks search complete";
@@ -134,25 +89,67 @@ void Jira::onTasksSearchFinished()
     for (const auto &value : issues.toArray()) {
         const auto issue = value.toObject();
         const auto fields = issue.value("fields").toObject();
-        mTasks.emplace_back(std::make_shared<Task>(fields.value("summary").toString(), issue.value("key").toString(),
-                                                   issue.value("id").toString(), issue.value("self").toString(),
-                                                   parseJiraDate(fields.value("updated").toString()),
-                                                   std::chrono::seconds{ fields.value("aggregatetimespent").toInt() },
-                                                   fields.value("priority").toObject().value("name").toString(),
-                                                   fields.value("status").toObject().value("name").toString(), this));
-        const auto &task = mTasks.back();
-
-        // https://docs.atlassian.com/software/jira/docs/api/REST/7.10.2/#api/2/issue-getIssueWorklog
-        auto req = makeRequest(task->url() + "/worklog");
-        const auto rep = netManager->get(req);
-        expectedReplies.push_back(rep);
-        connect(rep, &QNetworkReply::finished, this,
-                [&task, this]() { onWorklogs(*task, dynamic_cast<QNetworkReply *>(QObject::sender())); });
+        const auto key = issue.value("key").toString();
+        mTasks[key] = std::make_shared<Task>(
+            fields.value("summary").toString(), key, issue.value("id").toString(), issue.value("self").toString(),
+            parseJiraDate(fields.value("updated").toString()),
+            std::chrono::seconds{ fields.value("aggregatetimespent").toInt() },
+            fields.value("priority").toObject().value("name").toString(),
+            fields.value("status").toObject().value("name").toString(), std::chrono::system_clock::time_point{}, this);
     }
 
     reply->close();
     reply->disconnect();
     reply->deleteLater();
+    emit taskSearchComplete();
+}
+
+bool Jira::updateWorklog(Task &task)
+{
+    // https://docs.atlassian.com/software/jira/docs/api/REST/7.10.2/#api/2/issue-getIssueWorklog
+    qDebug() << "Updating worklog of task " << task.key();
+    auto req = makeRequest(task.url() + "/worklog");
+    const auto rep = netManager->get(req);
+    connect(rep, &QNetworkReply::finished, this,
+            [&task, this]() { onWorklogs(task, dynamic_cast<QNetworkReply *>(QObject::sender())); });
+    return true;
+}
+
+void Jira::onWorklogs(Task &task, QNetworkReply *reply)
+{
+    //    qDebug() << "Got worklogs for " << task.id;
+
+    const auto parsedReply = parseReply(reply);
+    if (!parsedReply.ok) {
+        return;
+    }
+
+    //     std::ofstream f(std::string("/tmp/worklog_") + task.id.toStdString() + " .json");
+    //     f << QString::fromUtf8(parsedReply.doc.toJson(QJsonDocument::JsonFormat::Indented)).toStdString();
+    //     f.close();
+
+    const auto worklogs = parsedReply.doc.object().value("worklogs");
+    if (worklogs.isUndefined()) {
+        qDebug() << "Cannot parse worklogs from response";
+        return;
+    }
+
+    task.clearWorkLog();
+    for (const auto &value : worklogs.toArray()) {
+        const auto worklog = value.toObject();
+        task.appendWorkLogItem(new WorkLog(
+            worklog.value("author").toObject().value("key").toString(), worklog.value("comment").toString(),
+            parseJiraDate(worklog.value("created").toString()), parseJiraDate(worklog.value("started").toString()),
+            parseJiraDate(worklog.value("updated").toString()), worklog.value("id").toString(),
+            worklog.value("issueId").toString(), worklog.value("self").toString(),
+            std::chrono::seconds{ worklog.value("timeSpentSeconds").toInt() }, &task));
+    }
+    task.set_lastWorklogFetch(std::chrono::system_clock::now());
+
+    reply->close();
+    reply->disconnect();
+    reply->deleteLater();
+    emit worklogsUpdated(&task);
 }
 
 QNetworkRequest Jira::makeRequest(const QString &url)

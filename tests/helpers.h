@@ -65,7 +65,7 @@ struct Arbitrary<std::shared_ptr<Task>>
         return rc::gen::makeShared<Task>(rc::gen::arbitrary<QString>(), rc::gen::arbitrary<QString>(),
                                          rc::gen::arbitrary<QString>(), rc::gen::arbitrary<QString>(), updated,
                                          rc::gen::arbitrary<std::chrono::seconds>(), rc::gen::arbitrary<QString>(),
-                                         rc::gen::arbitrary<QString>());
+                                         rc::gen::arbitrary<QString>(), updated);
     }
 };
 
@@ -87,6 +87,8 @@ inline bool compareTasks(const std::shared_ptr<Task> &task1, const std::shared_p
                 == date::floor<std::chrono::seconds>(task2->updated()));
         REQUIRE(task1->priority() == task2->priority());
         REQUIRE(task1->status() == task2->status());
+        REQUIRE(date::floor<std::chrono::seconds>(task1->lastWorklogFetch())
+                == date::floor<std::chrono::seconds>(task2->lastWorklogFetch()));
 
         const auto worklogCount1 = task1->workLogCount();
         const auto worklogCount2 = task2->workLogCount();

@@ -10,12 +10,14 @@ Task::Task(QObject *parent)
     , m_timeSpent()
     , m_priority()
     , m_status()
+    , m_lastWorklogFetch()
     , m_workLog(this)
 {
 }
 
 Task::Task(QString p_title, QString p_key, QString p_id, QString p_url, std::chrono::system_clock::time_point p_updated,
-           std::chrono::seconds p_timeSpent, QString p_priority, QString p_status, QObject *parent)
+           std::chrono::seconds p_timeSpent, QString p_priority, QString p_status,
+           std::chrono::system_clock::time_point p_lastWorklogFetch, QObject *parent)
     : QObject(parent)
     , m_title(std::move(p_title))
     , m_key(std::move(p_key))
@@ -25,6 +27,7 @@ Task::Task(QString p_title, QString p_key, QString p_id, QString p_url, std::chr
     , m_timeSpent(std::move(p_timeSpent))
     , m_priority(std::move(p_priority))
     , m_status(std::move(p_status))
+    , m_lastWorklogFetch(std::move(p_lastWorklogFetch))
     , m_workLog(this)
 {
     connect(this, &Task::timeSpentChanged, this, [this]() { emit timeSpentStrChanged(); });

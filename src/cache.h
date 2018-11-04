@@ -4,13 +4,14 @@
 #include <list>
 #include <memory>
 
+#include "jira.h"
 #include "task.h"
 #include "worklog.h"
 
 class Cache
 {
 public:
-    using TaskList = std::list<std::shared_ptr<Task>>;
+    using TaskList = Jira::TaskList;
 
     Cache();
     Cache(const QString &dataDir, const QString &dataFile = "tasks.cache");

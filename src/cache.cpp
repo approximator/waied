@@ -52,7 +52,7 @@ Cache::TaskList Cache::loadTasks() const
     while (tasksCount--) {
         auto task = std::make_shared<Task>();
         stream >> *task;
-        tasks.push_back(task);
+        tasks[task->key()] = task;
     }
 
     return tasks;
@@ -106,7 +106,7 @@ static QDataStream &operator<<(QDataStream &stream, Task &task)
 {
     auto wlCount = task.workLogCount();
     stream << task.title() << task.key() << task.id() << task.url() << task.updated() << task.timeSpent()
-           << task.priority() << task.status() << wlCount;
+           << task.priority() << task.status() << task.lastWorklogFetch() << wlCount;
     for (int i = 0; i < wlCount; ++i) {
         stream << *task.workLogItem(i);
     }
@@ -123,8 +123,9 @@ static QDataStream &operator>>(QDataStream &stream, Task &task)
     auto timeSpent = decltype(task.timeSpent()){};
     auto priority = decltype(task.priority()){};
     auto status = decltype(task.status()){};
+    auto lastWorklogFetch = decltype(task.lastWorklogFetch()){};
     auto wlCount = int{ 0 };
-    stream >> title >> key >> id >> url >> updated >> timeSpent >> priority >> status >> wlCount;
+    stream >> title >> key >> id >> url >> updated >> timeSpent >> priority >> status >> lastWorklogFetch >> wlCount;
     task.set_title(title);
     task.set_url(url);
     task.set_key(key);
@@ -133,6 +134,7 @@ static QDataStream &operator>>(QDataStream &stream, Task &task)
     task.set_timeSpent(timeSpent);
     task.set_priority(priority);
     task.set_status(status);
+    task.set_lastWorklogFetch(lastWorklogFetch);
 
     for (int i = 0; i < wlCount; ++i) {
         auto wl = new WorkLog(&task);
