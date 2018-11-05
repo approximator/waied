@@ -74,6 +74,26 @@
             "id": "1002",
             "key": "taskkey4",
             "self": "http://127.0.0.1:8012/jira/rest/api/2/issue/1002"
+        },
+        {
+            "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+            "fields": {
+                "aggregatetimespent": 19800,
+                "updated": "2018-12-07T18:36:30.000+0000",
+                "summary": "Do some another work please",
+                "priority": {
+                    "name": "Major",
+                    "id": "3"
+                },
+                "status": {
+                    "description": "This issue is being actively worked on at the moment by the assignee.",
+                    "name": "In Progress",
+                    "id": "3"
+                }
+            },
+            "id": "1008",
+            "key": "taskkey8",
+            "self": "http://127.0.0.1:8012/jira/rest/api/2/issue/1008"
         }
     ],
     "maxResults": 4,
