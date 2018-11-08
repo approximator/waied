@@ -33,19 +33,41 @@ Page {
                 Layout.fillWidth: true
                 text: jiraSettings.apiUrl
                 placeholderText: qsTr("Jira URL → https://jira.example.com/jira/rest/api/2")
+                selectByMouse: true
             }
             TextField {
                 id: username
                 Layout.fillWidth: true
                 text: jiraSettings.username
                 placeholderText: qsTr("User name")
+                selectByMouse: true
             }
 
-            TextField {
-                id: pass
+            RowLayout {
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 Layout.fillWidth: true
-                text: jiraSettings.pass
-                placeholderText: qsTr("P@ssw0rd")
+                TextField {
+                    id: pass
+                    Layout.fillWidth: true
+                    text: jiraSettings.pass
+                    placeholderText: qsTr("P@ssw0rd")
+                    echoMode: TextInput.Password
+                    selectByMouse: true
+                }
+                Text {
+                    // "\uE803"  icon-eye
+                    // "\uE804"  icon-eye-off
+                    text: (pass.echoMode == TextInput.Normal ? "\uE804" : "\uE803")
+                    font.family: "fontello"
+                    font.pointSize: 20
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            pass.echoMode = (pass.echoMode == TextInput.Normal ? TextInput.Password : TextInput.Normal)
+                            pass.forceActiveFocus()
+                        }
+                    }
+                }
             }
 
             RowLayout {
