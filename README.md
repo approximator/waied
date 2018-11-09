@@ -69,6 +69,7 @@ export CC=gcc-8
 Build
 
 ```shell
+git submodule update --init --recursive
 mkdir build
 cd build
 cmake ..
