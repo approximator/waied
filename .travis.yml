@@ -1,0 +1,45 @@
+# Enable C++ support
+language: cpp
+
+# Compiler selection
+compiler:
+  - gcc
+
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:beineri/opt-qt-5.10.1-trusty'
+          packages:
+            - wget
+            - make
+            - libssl-dev
+            - mesa-common-dev
+            - libglu1-mesa-dev
+            - gcc-8
+            - g++-8
+            - qt510base
+            - qt510declarative
+            - qt510multimedia
+            - qt510quickcontrols2
+
+      env:
+        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+
+before_install:
+    - eval "${MATRIX_EVAL}"
+      # cmake 3.12
+    - |
+      travis_retry wget -q https://cmake.org/files/v3.12/cmake-3.12.3-Linux-x86_64.sh
+      sh cmake-3.12.3-Linux-x86_64.sh --skip-license
+    - export PATH=$TRAVIS_BUILD_DIR/bin:$PATH
+
+script:
+  - mkdir build
+  - cd build
+  - cmake ..
+  - cmake --build .
+  #- cd tests && ctest -V
