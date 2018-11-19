@@ -48,6 +48,7 @@ public:
 private:
     Jira mJira;
     QString mCurrentUser{};
+    Jira::TaskList mTasks{};
 
     void updateReportSummary(const WorkLog *worklogItem);
 
