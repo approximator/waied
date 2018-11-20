@@ -53,7 +53,7 @@ void Jira::onWorklogs(Task &task, QNetworkReply *reply)
 {
     //    qDebug() << "Got worklogs for " << task.id;
 
-    auto parsedReply = parseReply(reply);
+    const auto parsedReply = parseReply(reply);
     if (!parsedReply.ok) {
         return;
     }
@@ -62,7 +62,7 @@ void Jira::onWorklogs(Task &task, QNetworkReply *reply)
     // f << QString::fromUtf8(parsedReply.doc.toJson(QJsonDocument::JsonFormat::Indented)).toStdString();
     // f.close();
 
-    auto worklogs = parsedReply.doc.object().value("worklogs");
+    const auto worklogs = parsedReply.doc.object().value("worklogs");
     if (worklogs.isUndefined()) {
         qDebug() << "Cannot parse worklogs from response";
         return;
@@ -78,8 +78,8 @@ void Jira::onWorklogs(Task &task, QNetworkReply *reply)
         return utc_tp;
     };
 
-    for (auto value : worklogs.toArray()) {
-        auto worklog = value.toObject();
+    for (const auto &value : worklogs.toArray()) {
+        const auto worklog = value.toObject();
         task.appendWorkLogItem(
             new WorkLog(worklog.value("author").toObject().value("key").toString(), worklog.value("comment").toString(),
                         parseDate(worklog.value("created").toString()), parseDate(worklog.value("started").toString()),
@@ -105,9 +105,8 @@ void Jira::onWorklogs(Task &task, QNetworkReply *reply)
 void Jira::onTasksSearchFinished()
 {
     qDebug() << "Tasks search complete";
-    QNetworkReply *reply = dynamic_cast<QNetworkReply *>(QObject::sender());
-
-    auto parsedReply = parseReply(reply);
+    const auto reply = dynamic_cast<QNetworkReply *>(QObject::sender());
+    const auto parsedReply = parseReply(reply);
     if (!parsedReply.ok) {
         return;
     }
@@ -116,23 +115,23 @@ void Jira::onTasksSearchFinished()
     // f << QString::fromUtf8(parsedReply.doc.toJson(QJsonDocument::JsonFormat::Indented)).toStdString();
     // f.close();
 
-    auto issues = parsedReply.doc.object().value("issues");
+    const auto issues = parsedReply.doc.object().value("issues");
     if (issues.isUndefined()) {
         qDebug() << "Cannot parse issues from response";
         return;
     }
 
-    for (auto value : issues.toArray()) {
-        auto issue = value.toObject();
+    for (const auto &value : issues.toArray()) {
+        const auto issue = value.toObject();
         mTasks.emplace_back(std::make_shared<Task>(
             issue.value("fields").toObject().value("summary").toString(), issue.value("key").toString(),
             issue.value("id").toString(), issue.value("self").toString(),
             std::chrono::seconds{ issue.value("fields").toObject().value("aggregatetimespent").toInt() }, this));
-        auto &task = mTasks.back();
+        const auto &task = mTasks.back();
 
         // https://docs.atlassian.com/software/jira/docs/api/REST/7.10.2/#api/2/issue-getIssueWorklog
         auto req = makeRequest(task->url() + "/worklog");
-        QNetworkReply *rep = netManager->get(req);
+        const auto rep = netManager->get(req);
         expectedReplies.push_back(rep);
         connect(rep, &QNetworkReply::finished, this,
                 [&task, this]() { onWorklogs(*task, dynamic_cast<QNetworkReply *>(QObject::sender())); });
