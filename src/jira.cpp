@@ -35,12 +35,12 @@ void Jira::searchTasks(const QString &query)
 
     // https://docs.atlassian.com/software/jira/docs/api/REST/7.10.2/#api/2/search
     const auto jiraApiUrl = m_apiUrl;
-    const auto fields = "id,key,summary,aggregatetimespent";
-    const auto url = fmt::format("{jiraUrl}/search?jql={jqlRequest}&fields={fields}&maxResults=20",
+    const auto fields = "id,key,summary,aggregatetimespent,priority,status";
+    const auto url = fmt::format("{jiraUrl}/search?jql={jqlRequest}&fields={fields}&maxResults=200",
                                  fmt::arg("jiraUrl", jiraApiUrl.toStdString()),
                                  fmt::arg("jqlRequest", query.toStdString()), fmt::arg("fields", fields));
-    auto request = makeRequest(QString(url.c_str()));
-    QNetworkReply *reply = netManager->get(request);
+    const auto request = makeRequest(QString(url.c_str()));
+    const auto reply = netManager->get(request);
     connect(reply, &QNetworkReply::finished, this, &Jira::onTasksSearchFinished);
 }
 
@@ -123,10 +123,12 @@ void Jira::onTasksSearchFinished()
 
     for (const auto &value : issues.toArray()) {
         const auto issue = value.toObject();
-        mTasks.emplace_back(std::make_shared<Task>(
-            issue.value("fields").toObject().value("summary").toString(), issue.value("key").toString(),
-            issue.value("id").toString(), issue.value("self").toString(),
-            std::chrono::seconds{ issue.value("fields").toObject().value("aggregatetimespent").toInt() }, this));
+        const auto fields = issue.value("fields").toObject();
+        mTasks.emplace_back(std::make_shared<Task>(fields.value("summary").toString(), issue.value("key").toString(),
+                                                   issue.value("id").toString(), issue.value("self").toString(),
+                                                   std::chrono::seconds{ fields.value("aggregatetimespent").toInt() },
+                                                   fields.value("priority").toObject().value("name").toString(),
+                                                   fields.value("status").toObject().value("name").toString(), this));
         const auto &task = mTasks.back();
 
         // https://docs.atlassian.com/software/jira/docs/api/REST/7.10.2/#api/2/issue-getIssueWorklog
