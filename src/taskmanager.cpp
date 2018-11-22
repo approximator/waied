@@ -4,11 +4,11 @@
 #include "taskmanager.h"
 
 TaskManager::TaskManager(QObject *parent)
-    : m_model(new TTasksModel(this))
+    : QObject(parent)
+    , m_model(new TTasksModel(this))
     , m_reportedToday(std::chrono::seconds{ 0 })
     , m_reportedYesterday(std::chrono::seconds{ 0 })
     , m_reportedThisWeek(std::chrono::seconds{ 0 })
-    , QObject(parent)
 {
     qDebug() << __FUNCTION__;
     connect(this, &TaskManager::reportedTodayChanged, this, [this]() { emit reportedTodayStrChanged(); });

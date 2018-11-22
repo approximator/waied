@@ -14,7 +14,7 @@ add_library(${LIB_NAME}
 )
 
 target_compile_definitions(${LIB_NAME} PUBLIC "-DQTQMLTRICKS_NO_PREFIX_ON_GETTERS=1" )
-target_include_directories(${LIB_NAME} PUBLIC
+target_include_directories(${LIB_NAME} SYSTEM PUBLIC
     qt-super-macros
     qt-qml-models
 )

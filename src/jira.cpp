@@ -93,8 +93,8 @@ void Jira::onWorklogs(Task &task, QNetworkReply *reply)
 
     auto isFinished = [](auto r) { return r->isFinished(); };
     if (std::all_of(begin(expectedReplies), end(expectedReplies), isFinished)) {
-        for (auto reply : expectedReplies) {
-            reply->deleteLater();
+        for (auto expectedReply : expectedReplies) {
+            expectedReply->deleteLater();
         }
         expectedReplies.clear();
         qDebug() << "All requests were finished";
