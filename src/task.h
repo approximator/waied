@@ -21,13 +21,15 @@ class Task : public QObject
     QML_WRITABLE_AUTO_PROPERTY(QString, id)
     QML_WRITABLE_AUTO_PROPERTY(QString, url)
     QML_WRITABLE_AUTO_PROPERTY(std::chrono::seconds, timeSpent)
+    QML_WRITABLE_AUTO_PROPERTY(QString, priority)
+    QML_WRITABLE_AUTO_PROPERTY(QString, status)
     QML_LIST_PROPERTY(WorkLog, workLog)
 
     Q_PROPERTY(QString timeSpentStr READ timeSpentStr NOTIFY timeSpentStrChanged)
 
 public:
     explicit Task(QString p_title, QString p_key, QString p_id, QString p_url, std::chrono::seconds p_timeSpent,
-                  QObject *parent = nullptr);
+                  QString p_priority, QString p_status, QObject *parent = nullptr);
 
     void appendWorkLogItem(WorkLog *wl);
     int workLogCount();

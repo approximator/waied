@@ -5,7 +5,16 @@
             "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
             "fields": {
                 "aggregatetimespent": 19800,
-                "summary": "Do some work please"
+                "summary": "Do some work please",
+                "priority": {
+                    "name": "Major",
+                    "id": "3"
+                },
+                "status": {
+                    "description": "This issue is being actively worked on at the moment by the assignee.",
+                    "name": "In Progress",
+                    "id": "3"
+                }
             },
             "id": "1003",
             "key": "taskkey1",
@@ -15,7 +24,14 @@
             "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
             "fields": {
                 "aggregatetimespent": 77400,
-                "summary": "Make a module for system keychain interaction"
+                "summary": "Make a module for system keychain interaction",
+                "priority": {
+                    "name": "Major"
+                },
+                "status": {
+                    "description": "A resolution has been taken, and it is awaiting verification by reporter. From here issues are either reopened, or are closed.",
+                    "name": "Resolved"
+                }
             },
             "id": "1000",
             "key": "taskkey2",
@@ -25,7 +41,14 @@
             "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
             "fields": {
                 "aggregatetimespent": 18000,
-                "summary": "Another feature"
+                "summary": "Another feature",
+                "priority": {
+                    "name": "Major"
+                },
+                "status": {
+                    "description": "The issue is open and ready for the assignee to start work on it.",
+                    "name": "Open"
+                }
             },
             "id": "1001",
             "key": "taskkey3",
@@ -35,7 +58,14 @@
             "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
             "fields": {
                 "aggregatetimespent": 21600,
-                "summary": "One more"
+                "summary": "One more",
+                "priority": {
+                    "name": "Trivial"
+                },
+                "status": {
+                    "description": "The issue is considered finished, the resolution is correct. Issues which are closed can be reopened.",
+                    "name": "Closed"
+                }
             },
             "id": "1002",
             "key": "taskkey4",
