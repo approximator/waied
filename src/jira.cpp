@@ -7,7 +7,7 @@
 #include <QJsonArray>
 
 #include "fmt/format.h"
-#include "date/tz.h"
+//#include "date/tz.h"
 
 #include "jira.h"
 
@@ -16,8 +16,28 @@ struct ReplyParseResult
     bool ok;
     QJsonDocument doc;
 };
+
 QNetworkRequest makeRequest(const QString &url);
 ReplyParseResult parseReply(QNetworkReply *reply);
+
+static auto parseJiraDate(const QString &str)
+{
+    const auto formatStr = "%FT%H:%M:%S%z";
+    // https://howardhinnant.github.io/date/date.html#from_stream_formatting
+    // %F	Equivalent to %Y-%m-%d. If modified with a width, the width is applied to only %Y.
+    // %T	Equivalent to %H:%M:%S.
+    // %M	The minutes as a decimal number.
+    // %S	The seconds as a decimal number
+    // %z	The offset from UTC in the format [+|-]hh[mm].
+
+    std::chrono::system_clock::time_point utc_tp;
+    std::istringstream in{ str.toStdString() };
+    in >> date::parse(formatStr, utc_tp);
+    if (!in.good()) {
+        qDebug() << "Cannot parse date: " << str;
+    }
+    return utc_tp;
+}
 
 // https://docs.atlassian.com/software/jira/docs/api/REST/7.10.2/
 Jira::Jira(QObject *parent)
@@ -58,9 +78,9 @@ void Jira::onWorklogs(Task &task, QNetworkReply *reply)
         return;
     }
 
-    // std::ofstream f(std::string("/tmp/worklog_") + task.id.toStdString() + " .json");
-    // f << QString::fromUtf8(parsedReply.doc.toJson(QJsonDocument::JsonFormat::Indented)).toStdString();
-    // f.close();
+    //     std::ofstream f(std::string("/tmp/worklog_") + task.id.toStdString() + " .json");
+    //     f << QString::fromUtf8(parsedReply.doc.toJson(QJsonDocument::JsonFormat::Indented)).toStdString();
+    //     f.close();
 
     const auto worklogs = parsedReply.doc.object().value("worklogs");
     if (worklogs.isUndefined()) {
@@ -68,24 +88,14 @@ void Jira::onWorklogs(Task &task, QNetworkReply *reply)
         return;
     }
 
-    auto parseDate = [](const QString &str) {
-        std::chrono::system_clock::time_point utc_tp;
-        std::istringstream in{ str.toStdString() };
-        in >> date::parse("%FT%H:%M:%S%z", utc_tp);
-        if (!in.good()) {
-            qDebug() << "Cannot parse date: " << str;
-        }
-        return utc_tp;
-    };
-
     for (const auto &value : worklogs.toArray()) {
         const auto worklog = value.toObject();
-        task.appendWorkLogItem(
-            new WorkLog(worklog.value("author").toObject().value("key").toString(), worklog.value("comment").toString(),
-                        parseDate(worklog.value("created").toString()), parseDate(worklog.value("started").toString()),
-                        parseDate(worklog.value("updated").toString()), worklog.value("id").toString(),
-                        worklog.value("issueId").toString(), worklog.value("self").toString(),
-                        std::chrono::seconds{ worklog.value("timeSpentSeconds").toInt() }, &task));
+        task.appendWorkLogItem(new WorkLog(
+            worklog.value("author").toObject().value("key").toString(), worklog.value("comment").toString(),
+            parseJiraDate(worklog.value("created").toString()), parseJiraDate(worklog.value("started").toString()),
+            parseJiraDate(worklog.value("updated").toString()), worklog.value("id").toString(),
+            worklog.value("issueId").toString(), worklog.value("self").toString(),
+            std::chrono::seconds{ worklog.value("timeSpentSeconds").toInt() }, &task));
     }
 
     reply->close();
@@ -126,6 +136,7 @@ void Jira::onTasksSearchFinished()
         const auto fields = issue.value("fields").toObject();
         mTasks.emplace_back(std::make_shared<Task>(fields.value("summary").toString(), issue.value("key").toString(),
                                                    issue.value("id").toString(), issue.value("self").toString(),
+                                                   parseJiraDate(fields.value("updated").toString()),
                                                    std::chrono::seconds{ fields.value("aggregatetimespent").toInt() },
                                                    fields.value("priority").toObject().value("name").toString(),
                                                    fields.value("status").toObject().value("name").toString(), this));

@@ -20,6 +20,7 @@ class Task : public QObject
     QML_WRITABLE_AUTO_PROPERTY(QString, key)
     QML_WRITABLE_AUTO_PROPERTY(QString, id)
     QML_WRITABLE_AUTO_PROPERTY(QString, url)
+    QML_WRITABLE_AUTO_PROPERTY(std::chrono::system_clock::time_point, updated)
     QML_WRITABLE_AUTO_PROPERTY(std::chrono::seconds, timeSpent)
     QML_WRITABLE_AUTO_PROPERTY(QString, priority)
     QML_WRITABLE_AUTO_PROPERTY(QString, status)
@@ -28,8 +29,9 @@ class Task : public QObject
     Q_PROPERTY(QString timeSpentStr READ timeSpentStr NOTIFY timeSpentStrChanged)
 
 public:
-    explicit Task(QString p_title, QString p_key, QString p_id, QString p_url, std::chrono::seconds p_timeSpent,
-                  QString p_priority, QString p_status, QObject *parent = nullptr);
+    explicit Task(QString p_title, QString p_key, QString p_id, QString p_url,
+                  std::chrono::system_clock::time_point p_updated, std::chrono::seconds p_timeSpent, QString p_priority,
+                  QString p_status, QObject *parent = nullptr);
 
     void appendWorkLogItem(WorkLog *wl);
     int workLogCount();

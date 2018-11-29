@@ -5,6 +5,7 @@
             "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
             "fields": {
                 "aggregatetimespent": 19800,
+                "updated": "2018-11-28T13:53:37.000+0000",
                 "summary": "Do some work please",
                 "priority": {
                     "name": "Major",
@@ -24,6 +25,7 @@
             "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
             "fields": {
                 "aggregatetimespent": 77400,
+                "updated": "2018-11-27T10:00:00.000+0000",
                 "summary": "Make a module for system keychain interaction",
                 "priority": {
                     "name": "Major"
@@ -41,6 +43,7 @@
             "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
             "fields": {
                 "aggregatetimespent": 18000,
+                "updated": "2018-11-27T10:00:00.000+0000",
                 "summary": "Another feature",
                 "priority": {
                     "name": "Major"
@@ -58,6 +61,7 @@
             "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
             "fields": {
                 "aggregatetimespent": 21600,
+                "updated": "2018-11-27T10:00:00.000+0000",
                 "summary": "One more",
                 "priority": {
                     "name": "Trivial"
