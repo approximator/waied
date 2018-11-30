@@ -29,9 +29,9 @@ class Task : public QObject
     Q_PROPERTY(QString timeSpentStr READ timeSpentStr NOTIFY timeSpentStrChanged)
 
 public:
-    explicit Task(QString p_title, QString p_key, QString p_id, QString p_url,
-                  std::chrono::system_clock::time_point p_updated, std::chrono::seconds p_timeSpent, QString p_priority,
-                  QString p_status, QObject *parent = nullptr);
+    explicit Task(QObject *parent = nullptr);
+    Task(QString p_title, QString p_key, QString p_id, QString p_url, std::chrono::system_clock::time_point p_updated,
+         std::chrono::seconds p_timeSpent, QString p_priority, QString p_status, QObject *parent = nullptr);
 
     void appendWorkLogItem(WorkLog *wl);
     int workLogCount();

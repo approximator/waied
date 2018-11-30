@@ -1,5 +1,19 @@
 #include "task.h"
 
+Task::Task(QObject *parent)
+    : QObject(parent)
+    , m_title()
+    , m_key()
+    , m_id()
+    , m_url()
+    , m_updated()
+    , m_timeSpent()
+    , m_priority()
+    , m_status()
+    , m_workLog(this)
+{
+}
+
 Task::Task(QString p_title, QString p_key, QString p_id, QString p_url, std::chrono::system_clock::time_point p_updated,
            std::chrono::seconds p_timeSpent, QString p_priority, QString p_status, QObject *parent)
     : QObject(parent)

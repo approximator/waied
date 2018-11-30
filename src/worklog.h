@@ -20,10 +20,11 @@ class WorkLog : public QObject
     QML_WRITABLE_AUTO_PROPERTY(std::chrono::seconds, timeSpentSec)
 
 public:
-    explicit WorkLog(QString p_author, QString p_comment, std::chrono::system_clock::time_point p_created,
-                     std::chrono::system_clock::time_point p_started, std::chrono::system_clock::time_point p_updated,
-                     QString p_id, QString p_issueId, QString p_url, std::chrono::seconds p_timeSpentSec,
-                     QObject *parent = nullptr);
+    explicit WorkLog(QObject *parent = nullptr);
+    WorkLog(QString p_author, QString p_comment, std::chrono::system_clock::time_point p_created,
+            std::chrono::system_clock::time_point p_started, std::chrono::system_clock::time_point p_updated,
+            QString p_id, QString p_issueId, QString p_url, std::chrono::seconds p_timeSpentSec,
+            QObject *parent = nullptr);
 
 signals:
 
