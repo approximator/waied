@@ -6,16 +6,15 @@
 
 static auto getTask(const QString &key)
 {
-    return std::make_shared<Task>(
-        "title", key, "id", "url", date::floor<std::chrono::seconds>(std::chrono::system_clock::now()),
-        std::chrono::seconds{ 1000 }, "Major", "Open", std::chrono::system_clock::time_point{});
+    const auto someTimePoint = std::chrono::system_clock::time_point{};
+    return std::make_shared<Task>("title", key, "id", "url", someTimePoint, std::chrono::seconds{ 1000 }, "Major",
+                                  "Open", std::chrono::system_clock::time_point{});
 }
 
 static WorkLog *getWorklogItem(Task &task)
 {
-    return new WorkLog("Author", "comment", date::floor<std::chrono::seconds>(std::chrono::system_clock::now()),
-                       date::floor<std::chrono::seconds>(std::chrono::system_clock::now()),
-                       date::floor<std::chrono::seconds>(std::chrono::system_clock::now()), "id", "issueId", "url",
+    const auto someTimePoint = std::chrono::system_clock::time_point{};
+    return new WorkLog("Author", "comment", someTimePoint, someTimePoint, someTimePoint, "id", "issueId", "url",
                        std::chrono::seconds{ 222 }, &task);
 }
 

@@ -68,7 +68,7 @@ QString Cache::getDataDir()
 
 static QDataStream &operator>>(QDataStream &stream, std::chrono::system_clock::time_point &tp)
 {
-    static const auto formatStr = "%FT%H:%M:%3S%z";
+    static const auto formatStr = "%FT%H:%M:%S%z";
     QString str;
     stream >> str;
     std::istringstream in{ str.toStdString() };

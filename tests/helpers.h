@@ -56,11 +56,10 @@ struct Arbitrary<std::shared_ptr<Task>>
 {
     static auto arbitrary()
     {
-        auto updated = rc::gen::map(rc::gen::suchThat<std::chrono::system_clock::time_point>([](auto tp) {
-                                        const auto y = date::year_month_day{ date::floor<date::days>(tp) }.year();
-                                        return y <= date::year{ 9999 } && y >= date::year{ 1 };
-                                    }),
-                                    [](auto tp) { return date::floor<std::chrono::seconds>(tp); });
+        auto updated = rc::gen::suchThat<std::chrono::system_clock::time_point>([](auto tp) {
+            const auto y = date::year_month_day{ date::floor<date::days>(tp) }.year();
+            return y <= date::year{ 9999 } && y >= date::year{ 1 };
+        });
 
         return rc::gen::makeShared<Task>(rc::gen::arbitrary<QString>(), rc::gen::arbitrary<QString>(),
                                          rc::gen::arbitrary<QString>(), rc::gen::arbitrary<QString>(), updated,
@@ -83,12 +82,10 @@ inline bool compareTasks(const std::shared_ptr<Task> &task1, const std::shared_p
         REQUIRE(task1->id() == task2->id());
         REQUIRE(task1->url() == task2->url());
         REQUIRE(task1->timeSpent() == task2->timeSpent());
-        REQUIRE(date::floor<std::chrono::seconds>(task1->updated())
-                == date::floor<std::chrono::seconds>(task2->updated()));
+        REQUIRE(task1->updated() == task2->updated());
         REQUIRE(task1->priority() == task2->priority());
         REQUIRE(task1->status() == task2->status());
-        REQUIRE(date::floor<std::chrono::seconds>(task1->lastWorklogFetch())
-                == date::floor<std::chrono::seconds>(task2->lastWorklogFetch()));
+        REQUIRE(task1->lastWorklogFetch() == task2->lastWorklogFetch());
 
         const auto worklogCount1 = task1->workLogCount();
         const auto worklogCount2 = task2->workLogCount();
@@ -99,12 +96,9 @@ inline bool compareTasks(const std::shared_ptr<Task> &task1, const std::shared_p
             const auto wl2 = task2->workLogItem(index);
             REQUIRE(wl1->author() == wl2->author());
             REQUIRE(wl1->comment() == wl2->comment());
-            REQUIRE(date::floor<std::chrono::seconds>(wl1->created())
-                    == date::floor<std::chrono::seconds>(wl2->created()));
-            REQUIRE(date::floor<std::chrono::seconds>(wl1->started())
-                    == date::floor<std::chrono::seconds>(wl2->started()));
-            REQUIRE(date::floor<std::chrono::seconds>(wl1->updated())
-                    == date::floor<std::chrono::seconds>(wl2->updated()));
+            REQUIRE(wl1->created() == wl2->created());
+            REQUIRE(wl1->started() == wl2->started());
+            REQUIRE(wl1->updated() == wl2->updated());
             REQUIRE(wl1->id() == wl2->id());
             REQUIRE(wl1->issueId() == wl2->issueId());
             REQUIRE(wl1->url() == wl2->url());
