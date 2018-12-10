@@ -18,7 +18,7 @@ class Task : public QObject
     Q_OBJECT
     QML_WRITABLE_AUTO_PROPERTY(QString, title)
     QML_WRITABLE_AUTO_PROPERTY(QString, key)
-    QML_WRITABLE_AUTO_PROPERTY(QString, id)
+    QML_WRITABLE_AUTO_PROPERTY(QString, taskId)
     QML_WRITABLE_AUTO_PROPERTY(QString, url)
     QML_WRITABLE_AUTO_PROPERTY(std::chrono::system_clock::time_point, updated)
     QML_WRITABLE_AUTO_PROPERTY(std::chrono::seconds, timeSpent)

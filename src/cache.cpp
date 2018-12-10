@@ -105,7 +105,7 @@ static QDataStream &operator<<(QDataStream &stream, const std::chrono::seconds &
 static QDataStream &operator<<(QDataStream &stream, Task &task)
 {
     auto wlCount = task.workLogCount();
-    stream << task.title() << task.key() << task.id() << task.url() << task.updated() << task.timeSpent()
+    stream << task.title() << task.key() << task.taskId() << task.url() << task.updated() << task.timeSpent()
            << task.priority() << task.status() << task.lastWorklogFetch() << wlCount;
     for (int i = 0; i < wlCount; ++i) {
         stream << *task.workLogItem(i);
@@ -117,7 +117,7 @@ static QDataStream &operator>>(QDataStream &stream, Task &task)
 {
     auto title = decltype(task.title()){};
     auto key = decltype(task.key()){};
-    auto id = decltype(task.id()){};
+    auto id = decltype(task.taskId()){};
     auto url = decltype(task.url()){};
     auto updated = decltype(task.updated()){};
     auto timeSpent = decltype(task.timeSpent()){};
@@ -129,7 +129,7 @@ static QDataStream &operator>>(QDataStream &stream, Task &task)
     task.set_title(title);
     task.set_url(url);
     task.set_key(key);
-    task.set_id(id);
+    task.set_taskId(id);
     task.set_updated(updated);
     task.set_timeSpent(timeSpent);
     task.set_priority(priority);

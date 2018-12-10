@@ -79,7 +79,7 @@ inline bool compareTasks(const std::shared_ptr<Task> &task1, const std::shared_p
     {
         REQUIRE(task1->title() == task2->title());
         REQUIRE(task1->key() == task2->key());
-        REQUIRE(task1->id() == task2->id());
+        REQUIRE(task1->taskId() == task2->taskId());
         REQUIRE(task1->url() == task2->url());
         REQUIRE(task1->timeSpent() == task2->timeSpent());
         REQUIRE(task1->updated() == task2->updated());

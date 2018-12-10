@@ -68,7 +68,7 @@ void TaskManager::processReceivedTasks()
                 qInfo() << "The task" << jiraTask->key() << "was updated on" << jiraTask->updated()
                         << "but worklogs for this task were fetched on" << task->lastWorklogFetch();
                 task->set_title(jiraTask->title());
-                task->set_id(jiraTask->id());
+                task->set_taskId(jiraTask->taskId());
                 task->set_url(jiraTask->url());
                 task->set_updated(jiraTask->updated());
                 task->set_timeSpent(jiraTask->timeSpent());
