@@ -1,0 +1,31 @@
+version: 0.0.{build}
+
+image: Visual Studio 2017
+platform: x64
+
+environment:
+  GENERATOR: "Visual Studio 15 2017 Win64"
+  QT5: C:\Qt\5.11.2\msvc2017_64
+  RC_PARAMS: "max_success=800 max_size=200"
+
+  matrix:
+    - CONFIGURATION: Debug
+    - CONFIGURATION: Release
+
+install:
+  - cmd: git submodule update --init --recursive
+
+before_build:
+  - set PATH=%QT5%\bin;%PATH%
+
+build_script:
+  - cmd: mkdir build && cd build
+  - cmd: cmake -G "%GENERATOR%" -DCMAKE_INSTALL_PREFIX:STRING=%APPVEYOR_BUILD_FOLDER%\install %APPVEYOR_BUILD_FOLDER%
+  - cmd: cmake --build . --config %CONFIGURATION%
+  - cmd: cmake --build . --target install --config %CONFIGURATION%
+  - cmd: dir %APPVEYOR_BUILD_FOLDER%\install
+  - cmd: cd %APPVEYOR_BUILD_FOLDER%\build\tests && ctest -V
+
+artifacts:
+- path: install
+  name: waied-$(appveyor_build_version)-%CONFIGURATION%

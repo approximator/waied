@@ -25,5 +25,5 @@ target_link_libraries(${LIB_NAME}
     Qt5::Qml
     Qt5::QuickControls2
     fmt-header-only
-    tz
+    date_interface
 )

@@ -1,6 +1,11 @@
 # waied
 What Am I Even Doing
 
+[![Build Status](https://travis-ci.com/approximator/waied.svg?branch=master)](https://travis-ci.com/approximator/waied)
+[![Build status](https://ci.appveyor.com/api/projects/status/qgglkmlg5ty1idp3/branch/master?svg=true)](https://ci.appveyor.com/project/approximator/waied/branch/master)
+
+-----------------------------------------
+
 ![image](https://user-images.githubusercontent.com/5008338/48269613-4adb7d00-e438-11e8-9591-218e1757d050.png)
 
 ## Build How To
@@ -24,6 +29,7 @@ export CC=gcc-8
 Build
 
 ```shell
+git submodule update --init --recursive
 mkdir build
 cd build
 cmake ..
@@ -32,7 +38,7 @@ cmake --build .
 
 ### Ubuntu 16.04
 
-Defauld ubuntu repos contain quite old packages, so it's necessary to add some ppa's:
+Default ubuntu repos contain quite old packages, so it's necessary to add some ppa's:
 
 ```shell
 sudo apt update

@@ -1,5 +1,19 @@
 #include "worklog.h"
 
+WorkLog::WorkLog(QObject *parent)
+    : QObject(parent)
+    , m_author()
+    , m_comment()
+    , m_created()
+    , m_started()
+    , m_updated()
+    , m_id()
+    , m_issueId()
+    , m_url()
+    , m_timeSpentSec()
+{
+}
+
 WorkLog::WorkLog(QString p_author, QString p_comment, std::chrono::system_clock::time_point p_created,
                  std::chrono::system_clock::time_point p_started, std::chrono::system_clock::time_point p_updated,
                  QString p_id, QString p_issueId, QString p_url, std::chrono::seconds p_timeSpentSec, QObject *parent)

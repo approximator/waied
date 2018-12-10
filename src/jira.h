@@ -5,7 +5,7 @@
 #include <chrono>
 #include <memory>
 
-#include <QObject>
+#include <QHash>
 #include <QNetworkAccessManager>
 
 #include "QQmlAutoPropertyHelpers.h"
@@ -21,10 +21,14 @@ class Jira : public QObject
     QML_WRITABLE_AUTO_PROPERTY(QString, password)
 
 public:
-    using TaskList = std::list<std::shared_ptr<Task>>;
+    using TaskList = QHash<QString, std::shared_ptr<Task>>;
+
+    Jira(const Jira &) = delete;
+    Jira &operator=(const Jira &) = delete;
 
     explicit Jira(QObject *parent = nullptr);
     void searchTasks(const QString &query);
+    bool updateWorklog(Task &task);
 
     const TaskList &tasks() const;
 
@@ -34,10 +38,10 @@ private:
     QNetworkAccessManager *netManager{ new QNetworkAccessManager(this) };
     QString mJiraApiUrl;
     TaskList mTasks;
-    std::vector<QNetworkReply *> expectedReplies;
 
 signals:
     void taskSearchComplete();
+    void worklogsUpdated(const Task *);
 
 public slots:
 

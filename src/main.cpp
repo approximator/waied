@@ -8,6 +8,7 @@
 
 int main(int argc, char *argv[])
 {
+    qSetMessagePattern("%{time process}  [%{type}] %{if-debug}%{file}:%{line}%{endif}    %{message}");
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);

@@ -1,45 +1,47 @@
-# Enable C++ support
 language: cpp
 
-# Compiler selection
 compiler:
+  - clang
   - gcc
 
-matrix:
-  include:
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - sourceline: 'ppa:beineri/opt-qt-5.10.1-trusty'
-          packages:
-            - wget
-            - make
-            - libssl-dev
-            - mesa-common-dev
-            - libglu1-mesa-dev
-            - gcc-8
-            - g++-8
-            - qt510base
-            - qt510declarative
-            - qt510multimedia
-            - qt510quickcontrols2
+env:
+  - BUILD_VARIANT=Debug
+  - BUILD_VARIANT=Release
 
-      env:
-        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-trusty-6.0
+      - sourceline: 'ppa:beineri/opt-qt-5.10.1-trusty'
+    packages:
+      - wget
+      - make
+      - libssl-dev
+      - mesa-common-dev
+      - libglu1-mesa-dev
+      - gcc-8
+      - g++-8
+      - clang-6.0
+      - qt510base
+      - qt510declarative
+      - qt510multimedia
+      - qt510quickcontrols2
 
 before_install:
-    - eval "${MATRIX_EVAL}"
-      # cmake 3.12
-    - |
-      travis_retry wget -q https://cmake.org/files/v3.12/cmake-3.12.3-Linux-x86_64.sh
-      sh cmake-3.12.3-Linux-x86_64.sh --skip-license
-    - export PATH=$TRAVIS_BUILD_DIR/bin:$PATH
+  - |
+    travis_retry wget -q https://cmake.org/files/v3.12/cmake-3.12.3-Linux-x86_64.sh
+    sh cmake-3.12.3-Linux-x86_64.sh --skip-license
+  - export PATH=$TRAVIS_BUILD_DIR/bin:$PATH
+  - export RC_PARAMS="max_success=800 max_size=200"
 
 script:
+  - if [ "$TRAVIS_COMPILER" == "gcc" ]; then export CXX=g++-8; export CC=gcc-8; fi
+  - if [ "$TRAVIS_COMPILER" == "clang" ]; then export CXX=clang++-6.0; export CC=clang-6.0; fi
   - mkdir build
   - cd build
-  - cmake ..
+  - cmake .. -DCMAKE_BUILD_TYPE:STRING=$BUILD_VARIANT -DCMAKE_INSTALL_PREFIX:STRING=$TRAVIS_BUILD_DIR/install
   - cmake --build .
-  #- cd tests && ctest -V
+  - cmake --build . --target install
+  - ls -lahR $TRAVIS_BUILD_DIR/install
+  - cd tests && ctest -V

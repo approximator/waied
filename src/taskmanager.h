@@ -2,16 +2,17 @@
 #define TASKMANAGER_H
 
 #include <chrono>
+
 #include <QObject>
 #include <QSettings>
 
 #include "QQmlObjectListModel.h"
 #include "QQmlAutoPropertyHelpers.h"
-
 #include "date/date.h"
 
 #include "jira.h"
 #include "task.h"
+#include "cache.h"
 
 using TTasksModel = QQmlObjectListModel<Task>;
 
@@ -29,6 +30,10 @@ class TaskManager : public QObject
 
 public:
     explicit TaskManager(QObject *parent = nullptr);
+    ~TaskManager();
+    TaskManager(const TaskManager &) = delete;
+    TaskManager &operator=(const TaskManager &) = delete;
+
     Q_INVOKABLE void updateTasks();
     Q_INVOKABLE void updateSettings(const QString &jiraUrl, const QString &username, const QString &pass);
 
@@ -46,11 +51,13 @@ public:
     }
 
 private:
-    Jira mJira;
+    Jira mJira{};
     QString mCurrentUser{};
     Jira::TaskList mTasks{};
+    Cache mCache{};
 
-    void updateReportSummary(const WorkLog *worklogItem);
+    void updateReportSummary(const Task *updatedTask);
+    bool loadTasksFromCache();
 
 signals:
     void reportedTodayStrChanged(void);
