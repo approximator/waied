@@ -109,6 +109,9 @@ void TaskManager::updateReportSummary(const Task *updatedTask)
                 } else if (worklogItem->started() >= startOfThisWeek) {  //start of week
                     reportedThisWeek += worklogItem->timeSpentSec();
                 }
+                if (worklogItem->updated() > task->lastCurrentUserLog()) {
+                    task->set_lastCurrentUserLog(worklogItem->updated());
+                }
             }
         }
     }
