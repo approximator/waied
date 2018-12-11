@@ -7,12 +7,16 @@
 
 TaskManager::TaskManager(QObject *parent)
     : QObject(parent)
-    , m_model(new TTasksModel(this))
+    , m_origModel(new TTasksModel(this))
+    , m_model(new TasksSortFilterProxyModel(this))
     , m_reportedToday(std::chrono::seconds{ 0 })
     , m_reportedYesterday(std::chrono::seconds{ 0 })
     , m_reportedThisWeek(std::chrono::seconds{ 0 })
 {
     qDebug() << __FUNCTION__;
+    m_model->setSourceModel(m_origModel);
+    m_model->set_sortBy("lastCurrentUserLog");
+
     connect(this, &TaskManager::reportedTodayChanged, this, [this]() { emit reportedTodayStrChanged(); });
     connect(this, &TaskManager::reportedYesterdayChanged, this, [this]() { emit reportedYesterdayStrChanged(); });
     connect(this, &TaskManager::reportedThisWeekChanged, this, [this]() { emit reportedThisWeekStrChanged(); });
@@ -61,7 +65,7 @@ void TaskManager::processReceivedTasks()
             qInfo() << "New task: " << jiraTask->key();
             mTasks[jiraTask->key()] = jiraTask;
             mJira.updateWorklog(*jiraTask);
-            m_model->append(jiraTask.get());
+            m_origModel->append(jiraTask.get());
         } else {
             auto task = mTasks[jiraTask->key()];
             if (task->lastWorklogFetch() < jiraTask->updated()) {
@@ -123,10 +127,10 @@ void TaskManager::updateReportSummary(const Task *updatedTask)
 bool TaskManager::loadTasksFromCache()
 {
     mTasks.clear();
-    m_model->clear();
+    m_origModel->clear();
     for (const auto &task : mCache.loadTasks()) {
         mTasks[task->key()] = task;
-        m_model->append(task.get());
+        m_origModel->append(task.get());
     }
     if (!mTasks.isEmpty()) {
         updateReportSummary(mTasks.values().first().get());

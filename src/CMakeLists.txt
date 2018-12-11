@@ -14,6 +14,8 @@ add_library(${PROJECT_NAME}_lib
     worklog.h
     taskmanager.cpp
     taskmanager.h
+    sortfilterproxymodel.cpp
+    sortfilterproxymodel.h
     log.h
 )
 target_compile_features(${PROJECT_NAME}_lib PUBLIC cxx_std_17)

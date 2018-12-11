@@ -13,13 +13,15 @@
 #include "jira.h"
 #include "task.h"
 #include "cache.h"
+#include "sortfilterproxymodel.h"
 
 using TTasksModel = QQmlObjectListModel<Task>;
 
 class TaskManager : public QObject
 {
     Q_OBJECT
-    QML_READONLY_AUTO_PROPERTY(TTasksModel *, model)
+    QML_READONLY_AUTO_PROPERTY(TTasksModel *, origModel)
+    QML_READONLY_AUTO_PROPERTY(TasksSortFilterProxyModel *, model)
     QML_WRITABLE_AUTO_PROPERTY(std::chrono::seconds, reportedToday)
     QML_WRITABLE_AUTO_PROPERTY(std::chrono::seconds, reportedYesterday)
     QML_WRITABLE_AUTO_PROPERTY(std::chrono::seconds, reportedThisWeek)
