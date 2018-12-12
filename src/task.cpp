@@ -11,6 +11,7 @@ Task::Task(QObject *parent)
     , m_priority()
     , m_status()
     , m_lastWorklogFetch()
+    , m_lastCurrentUserLog()
     , m_workLog(this)
 {
 }
@@ -28,6 +29,7 @@ Task::Task(QString p_title, QString p_key, QString p_id, QString p_url, std::chr
     , m_priority(std::move(p_priority))
     , m_status(std::move(p_status))
     , m_lastWorklogFetch(std::move(p_lastWorklogFetch))
+    , m_lastCurrentUserLog()
     , m_workLog(this)
 {
     connect(this, &Task::timeSpentChanged, this, [this]() { emit timeSpentStrChanged(); });

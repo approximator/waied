@@ -25,6 +25,7 @@ class Task : public QObject
     QML_WRITABLE_AUTO_PROPERTY(QString, priority)
     QML_WRITABLE_AUTO_PROPERTY(QString, status)
     QML_WRITABLE_AUTO_PROPERTY(std::chrono::system_clock::time_point, lastWorklogFetch)
+    QML_WRITABLE_AUTO_PROPERTY(std::chrono::system_clock::time_point, lastCurrentUserLog)
     QML_LIST_PROPERTY(WorkLog, workLog)
 
     Q_PROPERTY(QString timeSpentStr READ timeSpentStr NOTIFY timeSpentStrChanged)

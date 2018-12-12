@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<TaskManager>("waied", 1, 0, "TaskManager");
     qRegisterMetaType<TTasksModel *>("TTasksModel*");
     qRegisterMetaType<std::chrono::seconds>("std::chrono::seconds");
+    qRegisterMetaType<std::chrono::system_clock::time_point>("std::chrono::system_clock::time_point");
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
