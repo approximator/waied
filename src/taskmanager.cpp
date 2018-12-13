@@ -101,8 +101,10 @@ void TaskManager::updateReportSummary(const Task *updatedTask)
     auto reportedThisWeek = std::chrono::seconds{ 0 };
 
     for (const auto &task : mTasks) {
+        auto currentUserSpent = std::chrono::seconds{0};
         for (const auto &worklogItem : task->workLog()) {
             if (worklogItem->author() == mCurrentUser) {
+                currentUserSpent += worklogItem->timeSpentSec();
                 if (worklogItem->started() >= startOfToday) {  // today
                     reportedToday += worklogItem->timeSpentSec();
                     reportedThisWeek += worklogItem->timeSpentSec();
@@ -118,6 +120,7 @@ void TaskManager::updateReportSummary(const Task *updatedTask)
                 }
             }
         }
+        task->set_currentUserSpent(currentUserSpent);
     }
     set_reportedToday(reportedToday);
     set_reportedYesterday(reportedYesterday);

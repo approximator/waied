@@ -12,6 +12,7 @@ Task::Task(QObject *parent)
     , m_status()
     , m_lastWorklogFetch()
     , m_lastCurrentUserLog()
+    , m_currentUserSpent()
     , m_workLog(this)
 {
 }
@@ -30,9 +31,11 @@ Task::Task(QString p_title, QString p_key, QString p_id, QString p_url, std::chr
     , m_status(std::move(p_status))
     , m_lastWorklogFetch(std::move(p_lastWorklogFetch))
     , m_lastCurrentUserLog()
+    , m_currentUserSpent()
     , m_workLog(this)
 {
     connect(this, &Task::timeSpentChanged, this, [this]() { emit timeSpentStrChanged(); });
+    connect(this, &Task::currentUserSpentChanged, this, [this]() { emit currentUserSpentStrChanged(); });
 }
 
 void Task::appendWorkLogItem(WorkLog *wl)
@@ -58,4 +61,9 @@ void Task::clearWorkLog()
 QString Task::timeSpentStr() const
 {
     return QString(date::format("%X", m_timeSpent).c_str());
+}
+
+QString Task::currentUserSpentStr() const
+{
+    return QString(date::format("%X", m_currentUserSpent).c_str());
 }
