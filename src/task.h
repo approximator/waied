@@ -26,9 +26,11 @@ class Task : public QObject
     QML_WRITABLE_AUTO_PROPERTY(QString, status)
     QML_WRITABLE_AUTO_PROPERTY(std::chrono::system_clock::time_point, lastWorklogFetch)
     QML_WRITABLE_AUTO_PROPERTY(std::chrono::system_clock::time_point, lastCurrentUserLog)
+    QML_WRITABLE_AUTO_PROPERTY(std::chrono::seconds, currentUserSpent)
     QML_LIST_PROPERTY(WorkLog, workLog)
 
     Q_PROPERTY(QString timeSpentStr READ timeSpentStr NOTIFY timeSpentStrChanged)
+    Q_PROPERTY(QString currentUserSpentStr READ currentUserSpentStr NOTIFY currentUserSpentStrChanged)
 
 public:
     explicit Task(QObject *parent = nullptr);
@@ -42,9 +44,11 @@ public:
     void clearWorkLog();
 
     QString timeSpentStr() const;
+    QString currentUserSpentStr() const;
 
 signals:
-    void timeSpentStrChanged(void);
+    void timeSpentStrChanged();
+    void currentUserSpentStrChanged();
 
 public slots:
 };

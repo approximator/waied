@@ -31,7 +31,7 @@ Page {
                 id: sortBy
                 Layout.preferredWidth: 400
                 displayText: "Sort by: " + currentText
-                model: ["updated", "lastCurrentUserLog", "status"]
+                model: ["lastCurrentUserLog", "updated", "status"]
 
                 onCurrentTextChanged: taskManager.model.sortBy = sortBy.currentText
             }
