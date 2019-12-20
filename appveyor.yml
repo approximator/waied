@@ -1,11 +1,11 @@
 version: 0.0.{build}
 
-image: Visual Studio 2017
+image: Visual Studio 2019
 platform: x64
 
 environment:
-  GENERATOR: "Visual Studio 15 2017 Win64"
-  QT5: C:\Qt\5.11.2\msvc2017_64
+  GENERATOR: "Visual Studio 16 2019"
+  QT5: C:\Qt\5.13.2\msvc2017_64
   RC_PARAMS: "max_success=800 max_size=200"
 
   matrix:
