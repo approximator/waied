@@ -38,6 +38,7 @@ public:
 
     Q_INVOKABLE void updateTasks();
     Q_INVOKABLE void updateSettings(const QString &jiraUrl, const QString &username, const QString &pass);
+    Q_INVOKABLE bool logTime(const QString &taskKey, const QString &timeStr);
 
     QString reportedTodayStr() const
     {
@@ -58,7 +59,7 @@ private:
     Jira::TaskList mTasks{};
     Cache mCache{};
 
-    void updateReportSummary(const Task *updatedTask);
+    void updateReportSummary();
     bool loadTasksFromCache();
 
 signals:

@@ -71,6 +71,7 @@ Page {
 
         delegate: TaskListItem {
             width: taskList.width
+            onLogTime: taskManager.logTime(taskKey, timeStr)
         }
     }
 }

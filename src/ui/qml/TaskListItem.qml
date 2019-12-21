@@ -1,14 +1,16 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import waied 1.0
 
 Pane {
+    signal logTime(string taskKey, string timeStr)
+
     RowLayout {
         width: parent.width
 
         Label {
             Layout.preferredWidth: 100
-            height: childrenRect.height
             horizontalAlignment: Text.AlignHCenter
             text: status
             font.pixelSize: 15
@@ -31,6 +33,25 @@ Pane {
                 Label {
                     color: "steelblue"
                     text: "You spent on this task: " + currentUserSpentStr
+                }
+            }
+        }
+
+        Column {
+            Row {
+                spacing: 5
+                height: childrenRect.height
+
+                ComboBox {
+                    id: logTimeInput
+                    currentIndex: 1
+                    // editable: true
+                    // validator: RegExpValidator { regExp: /(\d{1,2})([.]\d{1,2})?([hd]\d{1})$/ }
+                    model: ["0.5h", "1h", "2h", "4h", "6h", "1d"]
+                }
+                Button {
+                    text: "Log"
+                    onClicked: logTime(key, logTimeInput.currentText)
                 }
             }
         }

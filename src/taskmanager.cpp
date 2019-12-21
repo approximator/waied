@@ -15,7 +15,6 @@ TaskManager::TaskManager(QObject *parent)
 {
     qDebug() << __FUNCTION__;
     m_model->setSourceModel(m_origModel);
-    m_model->set_sortBy("lastCurrentUserLog");
 
     connect(this, &TaskManager::reportedTodayChanged, this, [this]() { emit reportedTodayStrChanged(); });
     connect(this, &TaskManager::reportedYesterdayChanged, this, [this]() { emit reportedYesterdayStrChanged(); });
@@ -56,6 +55,29 @@ void TaskManager::updateSettings(const QString &jiraUrl, const QString &username
     qDebug() << "Jira API: " << jiraUrl;
 }
 
+bool TaskManager::logTime(const QString &taskKey, const QString &timeStr)
+{
+    using namespace std::chrono;
+    auto parsedTime = seconds{ 0 };
+
+    if (timeStr.endsWith('h')) {
+        parsedTime = duration_cast<seconds>(duration<float, hours::period>{ timeStr.chopped(1).toFloat() });
+    } else if (timeStr.endsWith('d')) {
+        parsedTime = duration_cast<seconds>(
+            duration<float, std::ratio_multiply<std::ratio<24>, hours::period>>{ timeStr.chopped(1).toFloat() });
+    } else {
+        qWarning() << "Cannot parse time" << timeStr;
+        return false;
+    }
+
+    if (!mTasks.contains(taskKey)) {
+        qWarning() << "There is no such task:" << taskKey;
+        return false;
+    }
+
+    return mJira.logWork(mTasks.value(taskKey), parsedTime);
+}
+
 void TaskManager::processReceivedTasks()
 {
     qDebug() << "Tasks found: " << mJira.tasks().size();
@@ -68,16 +90,17 @@ void TaskManager::processReceivedTasks()
             m_origModel->append(jiraTask.get());
         } else {
             auto task = mTasks[jiraTask->key()];
+            task->set_title(jiraTask->title());
+            task->set_taskId(jiraTask->taskId());
+            task->set_url(jiraTask->url());
+            task->set_updated(jiraTask->updated());
+            task->set_timeSpent(jiraTask->timeSpent());
+            task->set_priority(jiraTask->priority());
+            task->set_status(jiraTask->status());
+
             if (task->lastWorklogFetch() < jiraTask->updated()) {
                 qInfo() << "The task" << jiraTask->key() << "was updated on" << jiraTask->updated()
                         << "but worklogs for this task were fetched on" << task->lastWorklogFetch();
-                task->set_title(jiraTask->title());
-                task->set_taskId(jiraTask->taskId());
-                task->set_url(jiraTask->url());
-                task->set_updated(jiraTask->updated());
-                task->set_timeSpent(jiraTask->timeSpent());
-                task->set_priority(jiraTask->priority());
-                task->set_status(jiraTask->status());
                 mJira.updateWorklog(*task);
             }
         }
@@ -86,10 +109,8 @@ void TaskManager::processReceivedTasks()
     mCache.saveTasks(mTasks);
 }
 
-void TaskManager::updateReportSummary(const Task *updatedTask)
+void TaskManager::updateReportSummary()
 {
-    qDebug() << "Updated worklogs of " << updatedTask->key();
-
     const auto today = date::floor<date::days>(std::chrono::system_clock::now());
     // day starts from 06:00
     const auto startOfToday = today + std::chrono::hours{ 6 };
@@ -101,7 +122,7 @@ void TaskManager::updateReportSummary(const Task *updatedTask)
     auto reportedThisWeek = std::chrono::seconds{ 0 };
 
     for (const auto &task : mTasks) {
-        auto currentUserSpent = std::chrono::seconds{0};
+        auto currentUserSpent = std::chrono::seconds{ 0 };
         for (const auto &worklogItem : task->workLog()) {
             if (worklogItem->author() == mCurrentUser) {
                 currentUserSpent += worklogItem->timeSpentSec();
@@ -135,8 +156,6 @@ bool TaskManager::loadTasksFromCache()
         mTasks[task->key()] = task;
         m_origModel->append(task.get());
     }
-    if (!mTasks.isEmpty()) {
-        updateReportSummary(mTasks.values().first().get());
-    }
+    updateReportSummary();
     return true;
 }

@@ -29,6 +29,8 @@ public:
     explicit Jira(QObject *parent = nullptr);
     void searchTasks(const QString &query);
     bool updateWorklog(Task &task);
+    bool logWork(const std::shared_ptr<Task> &task, const std::chrono::seconds timeSpent,
+                 const std::chrono::system_clock::time_point started = std::chrono::system_clock::now());
 
     const TaskList &tasks() const;
 

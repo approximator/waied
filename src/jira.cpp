@@ -115,6 +115,52 @@ bool Jira::updateWorklog(Task &task)
     return true;
 }
 
+static std::string formatTimeForJira(const std::chrono::system_clock::time_point started)
+{
+    static const auto formatStr = "%FT%H:%M:%S%z";
+    std::ostringstream startedStream;
+    startedStream << date::format(formatStr, started);
+    auto startedStr = startedStream.str();
+    const auto it = std::find(std::rbegin(startedStr), std::rend(startedStr), '.');
+    startedStr.erase(--(it.base()), std::end(startedStr));
+    return startedStr + ".000+0000";
+}
+
+bool Jira::logWork(const std::shared_ptr<Task> &task, const std::chrono::seconds timeSpent,
+                   const std::chrono::system_clock::time_point started)
+{
+    qDebug() << "Logging" << timeSpent.count() << "seconds for" << task->key();
+
+    QJsonDocument jsonData(
+        { QJsonObject{ { "comment", QJsonValue::fromVariant("") },
+                       { "started", QJsonValue::fromVariant(formatTimeForJira(started).c_str()) },
+                       { "timeSpentSeconds", QJsonValue::fromVariant(static_cast<qint64>(timeSpent.count())) } } });
+    qDebug() << jsonData;
+    const auto data = jsonData.toJson(QJsonDocument::Compact);
+
+    auto request = makeRequest(task->url() + "/worklog");
+    request.setRawHeader("Content-Type", "application/json");
+    request.setRawHeader("Content-Length", QString::number(data.size()).toLatin1());
+
+    const auto reply = netManager->post(request, data);
+    connect(reply, &QNetworkReply::finished, this, [task, this]() mutable {
+        const auto jiraReply = dynamic_cast<QNetworkReply *>(QObject::sender());
+        const auto parsedReply = parseReply(jiraReply);
+        if (!parsedReply.ok) {
+            return;
+        }
+        if (jiraReply->error() != QNetworkReply::NoError) {
+            qWarning() << "Could not log time";
+            return;
+        }
+
+        // TODO: update task data
+        updateWorklog(*task);
+    });
+
+    return true;
+}
+
 void Jira::onWorklogs(Task &task, QNetworkReply *reply)
 {
     //    qDebug() << "Got worklogs for " << task.id;
@@ -169,7 +215,7 @@ ReplyParseResult parseReply(QNetworkReply *reply)
     res.ok = false;
 
     if (reply->error()) {
-        qDebug() << "Request error: " << reply->errorString();
+        qDebug() << "Request error: " << reply->errorString() << reply->readAll();
         return res;
     }
 
