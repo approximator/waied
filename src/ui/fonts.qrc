@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>fonts/fontello.ttf</file>
+        <file>fonts/dejavu-fonts-ttf-2.37/ttf/DejaVuSans.ttf</file>
     </qresource>
 </RCC>

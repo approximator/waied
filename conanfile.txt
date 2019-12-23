@@ -1,0 +1,39 @@
+[requires]
+qt/5.15.1@bincrafters/stable
+date/2.4.1@bincrafters/stable
+fmt/6.1.2
+gtest/1.10.0
+rapidcheck/20200131
+
+[generators]
+cmake
+
+[options]
+qt:shared=False
+qt:GUI=True
+qt:qtsvg=True
+qt:widgets=True
+qt:qtdeclarative=True
+qt:qtmultimedia=True
+qt:qtxmlpatterns=True
+qt:qttranslations=True
+qt:qtquickcontrols=True
+qt:qtquickcontrols2=True
+qt:qtx11extras=True
+qt:qtimageformats=True
+qt:qtgraphicaleffects=True
+qt:qttools=True
+qt:qtconnectivity=True
+qt:qtnetworkauth=True
+qt:with_freetype=True
+qt:with_pq=False
+qt:with_odbc=False
+qt:with_mysql=False
+qt:with_sqlite3=False
+qt:with_fontconfig=False
+
+# conan inspect qt/5.13.0@bincrafters/stable -a=options
+# conan install .. --update -s build_type=Release --build=missing
+# conan install .. -s build_type=Debug --build=missing
+# apt update &&  apt install -y libgl1-mesa-glx libegl1 libxcb-xinput0 libxcb-shm0 libxcb-randr0 libxcb-render0 libxcb-shape0 libxcb-xfixes0 libxcb-xinerama0
+# docker run --rm -ti -v /tmp/waiedb:/w -v /tmp/.X11-unix:/tmp/.X11-unix ubuntu:bionic bash

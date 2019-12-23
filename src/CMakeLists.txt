@@ -1,7 +1,8 @@
+find_package(Qt5 COMPONENTS Core REQUIRED)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_library(${PROJECT_NAME}_lib
     jira.cpp
@@ -20,11 +21,7 @@ add_library(${PROJECT_NAME}_lib
 )
 target_compile_features(${PROJECT_NAME}_lib PUBLIC cxx_std_17)
 
-find_package(Qt5 COMPONENTS Core Quick QuickControls2 REQUIRED)
 target_link_libraries(${PROJECT_NAME}_lib PUBLIC
-    Qt5::Core
-    Qt5::Qml
-    Qt5::QuickControls2
     waied-submodules
 )
 

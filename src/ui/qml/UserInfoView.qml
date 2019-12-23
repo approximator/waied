@@ -1,7 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
-import QtQuick.Controls.Material 2.2
 import Qt.labs.settings 1.0
 
 Page {
@@ -13,7 +12,6 @@ Page {
     Pane {
         padding: 50
         anchors.centerIn: parent
-        Material.elevation: 7
 
         ColumnLayout {
             spacing: 10
