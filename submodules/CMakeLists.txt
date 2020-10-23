@@ -11,9 +11,43 @@ if (USE_CONAN)
     endif()
 
     include(${CMAKE_BINARY_DIR}/conan.cmake)
-    conan_cmake_run(CONANFILE ../conanfile.txt
+
+    set(STATIC_OPTION "")
+    if (STATIC_BUILD)
+        set(STATIC_OPTION "*:shared=False")
+    endif()
+    conan_cmake_run(REQUIRES qt/5.15.0@bincrafters/stable
+                             openssl/1.1.1g
+                             date/2.4.1
+                             fmt/6.1.2
+                             gtest/1.10.0
+                             rapidcheck/20200131
                     BASIC_SETUP CMAKE_TARGETS
-                    BUILD missing)
+                    UPDATE BUILD outdated
+                    OPTIONS
+                        ${STATIC_OPTION}
+                        qt:GUI=True
+                        qt:qtsvg=True
+                        qt:widgets=True
+                        qt:qtdeclarative=True
+                        qt:qtmultimedia=True
+                        qt:qtxmlpatterns=True
+                        qt:qttranslations=True
+                        qt:qtquickcontrols=True
+                        qt:qtquickcontrols2=True
+                        qt:qtx11extras=True
+                        qt:qtimageformats=True
+                        qt:qtgraphicaleffects=True
+                        qt:qttools=True
+                        qt:qtconnectivity=True
+                        qt:qtnetworkauth=True
+                        qt:with_freetype=True
+                        qt:with_pq=False
+                        qt:with_odbc=False
+                        qt:with_sqlite3=True
+                        qt:with_fontconfig=False
+                        glib:shared=True
+                    )
 
     set(DEP_LIBS
         CONAN_PKG::date
@@ -31,12 +65,12 @@ else ()
         date_interface)
 endif ()
 
-find_package(Qt5 COMPONENTS Core Gui Widgets Quick QuickWidgets QuickControls2 QmlWorkerScript CONFIG REQUIRED)
+
+find_package(Qt5 COMPONENTS Core Gui Widgets Quick QuickWidgets QuickControls2 CONFIG REQUIRED)
 message(STATUS "Qt Core: ${Qt5Core_DIR}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 file(GLOB_RECURSE SRCS "qt-qml-models/*.cpp")
@@ -84,6 +118,5 @@ target_link_libraries(${LIB_NAME}
     Qt5::Quick
     Qt5::QuickWidgets
     Qt5::QuickControls2
-    Qt5::QmlWorkerScript
     ${DEP_LIBS}
 )
