@@ -7,4 +7,4 @@ option(STATIC_BUILD "Static build" OFF)
 
 add_subdirectory(submodules EXCLUDE_FROM_ALL)
 add_subdirectory(src)
-add_subdirectory(tests)
+add_subdirectory(tests EXCLUDE_FROM_ALL)
